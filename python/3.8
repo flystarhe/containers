@@ -1,0 +1,60 @@
+# syntax = docker/dockerfile:experimental
+#
+# NOTE: To build this you will need a docker version > 18.06 with
+#       experimental enabled and DOCKER_BUILDKIT=1
+#
+#       If you do not use buildkit you are not going to have a good time
+#
+#       For reference: 
+#           https://docs.docker.com/develop/develop-images/build_enhancements/
+ARG BASE_IMAGE=ubuntu:18.04
+ARG PYTHON_VERSION=3.8
+
+FROM ${BASE_IMAGE} as dev-base
+RUN --mount=type=cache,id=apt-dev,target=/var/cache/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        ccache \
+        cmake \
+        curl \
+        git \
+        vim \
+        libjpeg-dev \
+        libpng-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN /usr/sbin/update-ccache-symlinks
+RUN mkdir /opt/ccache && ccache --set-config=cache_dir=/opt/ccache
+
+FROM dev-base as conda
+ARG PYTHON_VERSION=3.8
+RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && rm ~/miniconda.sh && \
+    /opt/conda/bin/conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy && \
+    /opt/conda/bin/conda clean -ya
+
+FROM conda as conda-installs
+RUN /opt/conda/bin/pip install notebook && \
+    /opt/conda/bin/conda clean -ya
+
+FROM ${BASE_IMAGE} as official
+RUN --mount=type=cache,id=apt-final,target=/var/cache/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        openssh-server \
+        curl \
+        git \
+        libjpeg-dev \
+        libpng-dev && \
+    rm -rf /var/lib/apt/lists/*
+COPY --from=conda-installs /opt/conda /opt/conda
+ENV PATH /opt/conda/bin:$PATH
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile
+WORKDIR /workspace
+COPY entrypoint.sh /usr/src/
+ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
+# Build and Run
+# docker build -t flystarhe/python:3.8 -f 3.8 --target official .
+# docker run -d -p 9000:9000 -p 9001:9001 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8

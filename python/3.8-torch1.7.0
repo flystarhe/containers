@@ -1,0 +1,22 @@
+FROM pytorch/pytorch:1.7.0-cuda11.0-cudnn8-devel
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        openssh-server \
+        curl \
+        git \
+        vim && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install notebook tornado && \
+    conda clean -ya
+
+WORKDIR /usr/src
+# conda-develop /usr/src/SimpleCV
+RUN git clone -b main --depth 1 https://github.com/flystarhe/SimpleCV.git SimpleCV && cd SimpleCV && \
+    git checkout -B main
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys
+WORKDIR /workspace
+COPY entrypoint.sh /usr/src/
+ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
