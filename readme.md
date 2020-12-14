@@ -7,7 +7,7 @@
 ## flystarhe/simplecv
 
 * `mmdet2.6`, `mmdet2.7`
-* `yolo5.3`, `yolo5.3.1`
+* `yolo5.3.1`
 
 ## build and run
 ```
