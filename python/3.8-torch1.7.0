@@ -11,7 +11,6 @@ RUN pip install notebook tornado && \
     conda clean -ya
 
 WORKDIR /usr/src
-# conda-develop /usr/src/SimpleCV
 RUN git clone -b main --depth 1 https://github.com/flystarhe/SimpleCV.git SimpleCV && cd SimpleCV && \
     git checkout -B main
 

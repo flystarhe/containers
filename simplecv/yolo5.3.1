@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         vim && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /usr/src
-RUN git clone https://github.com/ultralytics/yolov5.git && cd yolov5 && \
+WORKDIR /usr/src/yolo
+RUN git clone https://github.com/ultralytics/yolov5.git yolo && cd yolo && \
     git reset --hard 94a7f55 && \
     pip install -r requirements.txt && \
     pip install gsutil wandb notebook networkx tornado seaborn lxml && \
@@ -23,5 +23,5 @@ WORKDIR /workspace
 COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and Push
-# t=ultralytics/yolov5:latest && sudo docker build -t $t . && sudo docker push $t
-# for v in {300..303}; do t=ultralytics/coco:v$v && sudo docker build -t $t . && sudo docker push $t; done
+# docker build -t flystarhe/simplecv:yolo5.3.1 -f yolo5.3.1 .
+# docker run --gpus all -d -p 9000:9000 -p 9001:9001 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/simplecv:yolo5.3.1
