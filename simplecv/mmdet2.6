@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install MMCV
 RUN pip install mmcv-full==1.1.6+torch1.6.0+cu101 -f https://openmmlab.oss-accelerate.aliyuncs.com/mmcv/dist/index.html && \
-    pip install albumentations notebook networkx tornado seaborn lxml
+    pip install albumentations scikit-learn notebook networkx tornado seaborn lxml
 
 # Install MMDetection
 WORKDIR /usr/src
