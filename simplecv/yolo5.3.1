@@ -2,6 +2,7 @@
 FROM nvcr.io/nvidia/pytorch:20.10-py3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
         openssh-server \
         screen \
         curl \
@@ -13,7 +14,7 @@ WORKDIR /usr/src/yolo
 RUN git clone https://github.com/ultralytics/yolov5.git yolo && cd yolo && \
     git reset --hard e92245a && \
     pip install -r requirements.txt && \
-    pip install gsutil wandb notebook networkx tornado seaborn lxml && \
+    pip install gsutil wandb albumentations scikit-learn notebook networkx tornado seaborn lxml && \
     /bin/bash weights/download_weights.sh
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
@@ -25,3 +26,4 @@ ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and Push
 # docker build -t flystarhe/simplecv:yolo5.3.1 -f yolo5.3.1 .
 # docker run --gpus all -d -p 9000:9000 -p 9001:9001 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/simplecv:yolo5.3.1
+# Updated: 2020-12-23

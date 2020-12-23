@@ -19,12 +19,12 @@ RUN --mount=type=cache,id=apt-dev,target=/var/cache/apt \
         cmake \
         curl \
         git \
-        vim \
         libjpeg-dev \
         libpng-dev && \
     rm -rf /var/lib/apt/lists/*
 RUN /usr/sbin/update-ccache-symlinks
 RUN mkdir /opt/ccache && ccache --set-config=cache_dir=/opt/ccache
+ENV PATH /opt/conda/bin:$PATH
 
 FROM dev-base as conda
 ARG PYTHON_VERSION=3.8
@@ -37,7 +37,7 @@ FROM conda as conda-installs
 ARG CUDA_VERSION=11.0
 ARG INSTALL_CHANNEL=pytorch
 ENV CONDA_OVERRIDE_CUDA=${CUDA_VERSION}
-RUN /opt/conda/bin/pip install notebook && \
+RUN /opt/conda/bin/pip install notebook tornado && \
     /opt/conda/bin/conda install -c "${INSTALL_CHANNEL}" -y pytorch torchvision "cudatoolkit=${CUDA_VERSION}" && \
     /opt/conda/bin/conda clean -ya
 
@@ -49,6 +49,7 @@ RUN --mount=type=cache,id=apt-final,target=/var/cache/apt \
         openssh-server \
         curl \
         git \
+        vim \
         libjpeg-dev \
         libpng-dev && \
     rm -rf /var/lib/apt/lists/*
@@ -66,3 +67,4 @@ ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and Run
 # docker build -t flystarhe/python:3.8-torch -f 3.8-torch --target official .
 # docker run --gpus all -d -p 9000:9000 -p 9001:9001 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8-torch
+# Updated: 2020-12-23

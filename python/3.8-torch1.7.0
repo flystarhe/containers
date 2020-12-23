@@ -1,10 +1,13 @@
 FROM pytorch/pytorch:1.7.0-cuda11.0-cudnn8-devel
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
         openssh-server \
         curl \
         git \
-        vim && \
+        vim \
+        libjpeg-dev \
+        libpng-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install notebook tornado && \
@@ -19,3 +22,4 @@ RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
 WORKDIR /workspace
 COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
+# Updated: 2020-12-23
