@@ -2,10 +2,12 @@
 set -e
 
 MODE=${1:-dev}
-if [ "${MODE}" = 'dev' ]; then
-    /usr/sbin/sshd -p 9001
+if [ "${MODE}" = 'ssh' ]
+then
+    /usr/sbin/sshd -D -p 9000
+elif [ "${MODE}" = 'app' ]
+then
+    nohup python /workspace/app_tornado.py 9000 ${@:2} > /workspace/nohup.out 2>&1
 else
-    nohup python /workspace/app_tornado.py 9001 ${@:2} > /workspace/nohup.out 2>&1 &
+    jupyter notebook --ip='*' --port=9000 --notebook-dir='/workspace' --NotebookApp.token='hi' --no-browser --allow-root
 fi
-
-jupyter notebook --ip='*' --port=9000 --notebook-dir='/workspace' --NotebookApp.token='hi' --no-browser --allow-root

@@ -30,6 +30,8 @@ ENV FORCE_CUDA="1"
 RUN git clone -b v2.7.0 --depth 1 https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
     pip install -r requirements/build.txt && \
     pip install --no-cache-dir -e . && \
+    conda install -y conda-build && \
+    conda-develop /usr/src/mmdetection && \
     conda clean -ya
 
 WORKDIR /workspace

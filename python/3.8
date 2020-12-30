@@ -41,22 +41,22 @@ FROM ${BASE_IMAGE} as official
 RUN --mount=type=cache,id=apt-final,target=/var/cache/apt \
     apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
-        openssh-server \
         curl \
         git \
         vim \
         libjpeg-dev \
         libpng-dev && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile
 COPY --from=conda-installs /opt/conda /opt/conda
 ENV PATH /opt/conda/bin:$PATH
-RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
-    echo "# ssh keys" > ~/.ssh/authorized_keys && \
-    echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile
+
+# RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys
+
 WORKDIR /workspace
 COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
-# Build and Run
+# Build and run
 # docker build -t flystarhe/python:3.8 -f 3.8 --target official .
-# docker run -d -p 9000:9000 -p 9001:9001 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8
-# Updated: 2020-12-23
+# docker run -d -p 9000:9000 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8 [dev|ssh|app]
+# Updated: 2020-12-30
