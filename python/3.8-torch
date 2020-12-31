@@ -66,5 +66,5 @@ COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
 # docker build -t flystarhe/python:3.8-torch -f 3.8-torch --target official .
-# docker run --gpus all -d -p 9000:9000 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8-torch [dev|ssh|app]
+# docker run --gpus device=0 -d -p 9000:9000 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8-torch [dev|ssh|app]
 # Updated: 2020-12-30
