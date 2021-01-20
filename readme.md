@@ -5,7 +5,7 @@
 * [https://cr.console.aliyun.com/cn-hangzhou/instance/repositories](#)
 * `docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:[镜像版本号]`
 
-`mmdet2.7`, `yolo5.3.1`
+`mmdet2.7`, `mmdet2.8`, `yolo5.3.1`
 
 ## flystarhe/python
 
@@ -20,7 +20,7 @@ export DOCKER_BUILDKIT=1
 docker build -t flystarhe/python:3.8 -f 3.8 --target official .
 docker build -t flystarhe/python:3.8-torch -f 3.8-torch --target official .
 
-docker run -it --rm --gpus device=0,1 nvidia/cuda:11.1-base-ubuntu18.04 bash
+docker run -it --rm --gpus all nvidia/cuda:11.1-base-ubuntu18.04 bash
 docker run -d -p 9000:9000 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8
 docker run --gpus device=0,1 -d -p 9000:9000 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8-torch
 ```
