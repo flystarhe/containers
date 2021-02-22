@@ -21,8 +21,8 @@ docker build -t flystarhe/python:3.8 -f 3.8 --target official .
 docker build -t flystarhe/python:3.8-torch -f 3.8-torch --target official .
 
 docker run -it --rm --gpus all nvidia/cuda:11.1-base-ubuntu18.04 bash
-docker run -d -p 9000:9000 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8
-docker run --gpus device=0,1 -d -p 9000:9000 --ipc=host --name test -v "$(pwd)":/workspace flystarhe/python:3.8-torch
+t=test && docker run -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
+t=test && docker run --gpus device=0,1 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8-torch
 ```
 
 * [http://ip:9000/?token=hi](#) for `dev`
@@ -39,4 +39,8 @@ vals = {"image": "/workspace/test.png"}
 response = requests.get(url, params=vals)
 print(response.status_code)
 print(response.text)
+
+response = requests.post(url, data=vals)
+print(response.status_code)
+print(response.json())
 ```
