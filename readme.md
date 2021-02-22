@@ -7,6 +7,14 @@
 
 `mmdet2.7`, `mmdet2.8`, `yolo5.3.1`
 
+```
+docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:mmdet2.8
+docker tag registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:mmdet2.8 mmdet:2.8
+
+docker save -o mmdet2.8-21.02.tar mmdet:2.8
+docker load -i mmdet2.8-21.02.tar
+```
+
 ## flystarhe/python
 
 * [https://hub.docker.com/repository/docker/flystarhe/python](#)
