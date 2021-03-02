@@ -1,11 +1,7 @@
 FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
 ARG PYTHON_VERSION=3.8
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential \
         ca-certificates \
-        cmake \
-        curl \
-        git \
         libjpeg-dev \
         libpng-dev && \
     rm -rf /var/lib/apt/lists/*
@@ -14,23 +10,16 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
-    /opt/conda/bin/conda install -y python=$PYTHON_VERSION conda-build notebook numpy mkl mkl-include ninja cython typing && \
-    /opt/conda/bin/conda install -y -c pytorch magma-cuda100 && \
+    /opt/conda/bin/conda install -y python=$PYTHON_VERSION conda-build notebook numpy && \
+    /opt/conda/bin/conda install -y -c pytorch pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=10.1 && \
     /opt/conda/bin/conda clean -ya
 ENV PATH /opt/conda/bin:$PATH
-
-RUN git clone -b v1.7.1 --depth 1 --recursive https://github.com/pytorch/pytorch.git /opt/pytorch && cd /opt/pytorch && \
-    TORCH_CUDA_ARCH_LIST="3.5 5.2 6.0 6.1 7.0+PTX" TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
-    CMAKE_PREFIX_PATH="$(dirname $(which conda))/../" \
-    pip install -v . && \
-    git clone -b v0.8.2 --depth 1 https://github.com/pytorch/vision.git /opt/vision && cd /opt/vision && \
-    pip install -v .
 
 WORKDIR /workspace
 COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
-# v=1.7.1
-# docker build -t flystarhe/python:3.8-torch${v}-dev -f 3.8-torch${v} .
+# v=1.7.1-dev
+# docker build -t flystarhe/python:3.8-torch${v} -f 3.8-torch${v} .
 # t=test && docker run --gpus device=0 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8-torch${v} [dev|ssh|app]
 # Updated: 2021-03-02
