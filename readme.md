@@ -5,7 +5,7 @@
 * [https://cr.console.aliyun.com/cn-hangzhou/instance/repositories](https://cr.console.aliyun.com/cn-hangzhou/instance/repositories)
 * `docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:[镜像版本号]`
 
-`mmdet2.7`, `mmdet2.8`, `yolo5.3.1`, `python3.8-torch1.7.1-dev`
+`mmdet2.7`, `mmdet2.8`, `yolo5.3.1`, `torch1.7.1-dev`
 
 ```
 docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:mmdet2.8
