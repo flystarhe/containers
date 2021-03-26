@@ -1,0 +1,10 @@
+#docker pull pytorch/pytorch:1.8.1-cuda11.1-cudnn8-devel
+#docker pull pytorch/pytorch:1.8.1-cuda11.1-cudnn8-runtime
+#docker pull nvidia/cuda:11.1-cudnn8-devel-ubuntu18.04
+
+ARG BASE_IMAGE=ubuntu:18.04
+ARG PYTHON_VERSION=3.8
+ARG CUDA_VERSION=11.1
+ARG CUDA_CHANNEL=nvidia
+ARG PYTORCH_VERSION=1.8.1
+ARG INSTALL_CHANNEL=pytorch
