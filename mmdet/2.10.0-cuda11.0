@@ -1,0 +1,39 @@
+#conda install pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch
+#docker pull pytorch/pytorch:1.7.1-cuda11.0-cudnn8-devel
+
+ARG CUDA_VERSION=11.0
+ARG PYTORCH_VERSION=1.7.1
+ARG TORCHVISION_VERSION=0.8.2
+ARG MMCV_VERSION=1.2.7
+ARG MMDET_VERSION=2.10.0
+
+FROM pytorch/pytorch:${PYTORCH_VERSION}-cuda${CUDA_VERSION}-cudnn8-devel
+
+ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    ninja-build \
+    libglib2.0-0 \
+    libxrender-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install MMCV
+RUN pip install mmcv-full==${MMCV_VERSION} -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.7.0/index.html && \
+    pip install albumentations scikit-image scikit-learn notebook networkx tornado seaborn lxml && \
+    pip install git+https://github.com/flystarhe/cvtk.git@main
+
+# Install MMDetection
+RUN conda clean --all
+RUN git clone https://github.com/open-mmlab/mmdetection.git /mmdetection
+WORKDIR /mmdetection
+ENV FORCE_CUDA="1"
+RUN pip install -r requirements/build.txt
+RUN pip install --no-cache-dir -e .
+
