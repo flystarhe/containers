@@ -1,15 +1,16 @@
 #conda install pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch
 #docker pull pytorch/pytorch:1.7.1-cuda11.0-cudnn8-devel
 
-ARG CUDA_VERSION=11.0
-ARG PYTORCH_VERSION=1.7.1
-ARG TORCHVISION_VERSION=0.8.2
-ARG MMCV_VERSION=1.2.7
-ARG MMDET_VERSION=2.10.0
+ARG CUDNN=8
+ARG CUDA=11.0
+ARG PYTORCH=1.7.1
+ARG TORCHVISION=0.8.2
+ARG MMCV=1.2.7
+ARG MMDET=2.10.0
 
-FROM pytorch/pytorch:${PYTORCH_VERSION}-cuda${CUDA_VERSION}-cudnn8-devel
+FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
 
-ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX"
+ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX 8.0"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
@@ -25,15 +26,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 # Install MMCV
-RUN pip install mmcv-full==${MMCV_VERSION} -f https://download.openmmlab.com/mmcv/dist/cu110/torch1.7.0/index.html && \
-    pip install albumentations scikit-image scikit-learn notebook networkx tornado seaborn lxml && \
-    pip install git+https://github.com/flystarhe/cvtk.git@main
+WORKDIR /usr/src
+RUN git clone -b v${MMCV} --depth 1 https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
+    pip install opencv-python-headless && \
+    MMCV_WITH_OPS=1 pip install -e .
 
 # Install MMDetection
-RUN conda clean --all
-RUN git clone https://github.com/open-mmlab/mmdetection.git /mmdetection
-WORKDIR /mmdetection
+WORKDIR /usr/src
 ENV FORCE_CUDA="1"
-RUN pip install -r requirements/build.txt
-RUN pip install --no-cache-dir -e .
+RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
+    pip install -r requirements/build.txt && \
+    pip install --no-cache-dir -e .
 
+# Other packages
+RUN pip install git+https://github.com/flystarhe/cvtk.git@main && \
+    pip install notebook tornado && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /usr/src/
+ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
+# Build and run
+# docker build -t flystarhe/mmdet:2.10.0-cuda11.0 -f 2.10.0-cuda11.0 .
+# t=test && docker run --gpus device=0 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/mmdet:2.10.0-cuda11.0 [dev|ssh|app]
+# Updated: 2021-03-29
