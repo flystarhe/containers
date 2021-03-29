@@ -27,14 +27,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install MMCV
 WORKDIR /usr/src
-RUN git clone -b v1.2.7 --depth 1 https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
+ARG MMCV=1.2.7
+RUN git clone -b v${MMCV} --depth 1 https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
     pip install opencv-python-headless && \
     MMCV_WITH_OPS=1 pip install -e .
 
 # Install MMDetection
 WORKDIR /usr/src
+ARG MMDET=2.10.0
 ENV FORCE_CUDA="1"
-RUN git clone -b v2.10.0 --depth 1 https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
+RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
     pip install -r requirements/build.txt && \
     pip install --no-cache-dir -e .
 
