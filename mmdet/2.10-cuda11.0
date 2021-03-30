@@ -29,9 +29,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install MMCV
 WORKDIR /usr/src
 ARG MMCV=1.2.7
+ENV MMCV_WITH_OPS="1"
 RUN git clone -b v${MMCV} --depth 1 https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
     pip install opencv-python-headless && \
-    MMCV_WITH_OPS=1 pip install -e .
+    pip install -e .
 
 # Install MMDetection
 WORKDIR /usr/src
