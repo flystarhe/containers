@@ -6,6 +6,7 @@
 * `docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:[镜像版本号]`
 
 mmdet: `2.10-cuda10.2`, `2.10-cuda11.0`, `2.10-cuda11.1`
+
 torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
 ## flystarhe/mmdet
