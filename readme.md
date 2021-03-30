@@ -5,39 +5,49 @@
 * [https://cr.console.aliyun.com/cn-hangzhou/instance/repositories](https://cr.console.aliyun.com/cn-hangzhou/instance/repositories)
 * `docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:[镜像版本号]`
 
-`mmdet2.7`, `mmdet2.8`, `yolo5.3.1`, `torch1.7.1-dev`
+mmdet: `2.10-cuda10.2`, `2.10-cuda11.0`, `2.10-cuda11.1`
+torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
-```
-docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:mmdet2.8
-docker tag registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:mmdet2.8 mmdet:2.8
+## flystarhe/mmdet
 
-docker save -o mmdet2.8-21.02.tar mmdet:2.8
-docker load -i mmdet2.8-21.02.tar
-```
+* [https://hub.docker.com/repository/docker/flystarhe/mmdet](https://hub.docker.com/repository/docker/flystarhe/mmdet)
+* `docker pull flystarhe/mmdet:[镜像版本号]`
 
-## flystarhe/python
+`2.10-cuda10.2`, `2.10-cuda11.0`, `2.10-cuda11.1`
 
-* [https://hub.docker.com/repository/docker/flystarhe/python](https://hub.docker.com/repository/docker/flystarhe/python)
-* `docker pull flystarhe/python:[镜像版本号]`
+## flystarhe/torch
 
-`3.8`, `3.8-torch`, `3.8-torch1.7.0`
+* [https://hub.docker.com/repository/docker/flystarhe/torch](https://hub.docker.com/repository/docker/flystarhe/torch)
+* `docker pull flystarhe/torch:[镜像版本号]`
+
+`1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
 ## build and run
 ```
+docker save -o mmdet2.8-21.02.tar mmdet:2.8
+docker load -i mmdet2.8-21.02.tar
+
+docker build -t flystarhe/python:3.8 -f 3.8 .
+
 export DOCKER_BUILDKIT=1
 docker build -t flystarhe/python:3.8 -f 3.8 --target official .
-docker build -t flystarhe/python:3.8-torch -f 3.8-torch --target official .
 
 docker run -it --rm --gpus all nvidia/cuda:11.1-base-ubuntu18.04 bash
 t=test && docker run -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
-t=test && docker run --gpus device=0,1 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8-torch
+t=test && docker run --gpus device=0,1 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
 ```
 
 * [http://ip:9000/?token=hi](#) for `dev`
 * `/usr/sbin/sshd -D -p 9000` for `ssh` mode
 * `python /workspace/app_tornado.py 9000 ${@:2}` for `app` mode
 
-## app
+## docker hub
+```
+docker tag local-image:tagname new-repo:tagname
+docker push new-repo:tagname
+```
+
+## test app
 ```python
 import requests
 
