@@ -62,3 +62,15 @@ response = requests.post(url, data=vals)
 print(response.status_code)
 print(response.json())
 ```
+
+## notes
+```
+# apt-get install -y openssh-server
+# RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys
+
+# sed -i 's/http:\/\/archive.ubuntu.com/https:\/\/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+# rm -rf /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/nvidia-ml.list
+# pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
+```
