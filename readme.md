@@ -11,6 +11,8 @@ mmdet: `2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`, `2.10
 
 torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
+>Run `python mmdet/utils/collect_env.py` to check built environment.
+
 ## flystarhe/mmdet
 
 * [https://hub.docker.com/repository/docker/flystarhe/mmdet](https://hub.docker.com/repository/docker/flystarhe/mmdet)
