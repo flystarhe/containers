@@ -41,14 +41,16 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
 WORKDIR /usr/src
 ARG MMCV=1.2.7
 RUN /opt/conda/bin/pip install opencv-python-headless && \
-    git clone -b v${MMCV} --depth 1 https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
+    git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
+    git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b && \
     MMCV_WITH_OPS=1 /opt/conda/bin/pip install -e .
 
 # Install MMDetection
 WORKDIR /usr/src
 ARG MMDET=2.10.0
 ENV FORCE_CUDA="1"
-RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
+RUN git clone https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
+    git checkout e3857b5f01f974d6e5347cbfaec148be07864f0c && \
     /opt/conda/bin/pip install -r requirements/build.txt && \
     /opt/conda/bin/pip install --no-cache-dir -e .
 
