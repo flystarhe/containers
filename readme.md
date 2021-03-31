@@ -30,6 +30,10 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 docker save -o mmdet2.8-21.02.tar mmdet:2.8
 docker load -i mmdet2.8-21.02.tar
 
+docker images registry.cn-hangzhou.aliyuncs.com/flystarhe/containers
+docker images registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:mmdet*
+docker images --filter=reference='*/*/*:mmdet*'
+
 docker build -t flystarhe/python:3.8 -f 3.8 .
 
 export DOCKER_BUILDKIT=1
