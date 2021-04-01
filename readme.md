@@ -5,8 +5,6 @@
 * [https://cr.console.aliyun.com/cn-hangzhou/instance/repositories](https://cr.console.aliyun.com/cn-hangzhou/instance/repositories)
 * `docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:[镜像版本号]`
 
-mmdet: `2.10-cuda10.2`, `2.10-cuda11.0`, `2.10-cuda11.1`
-
 mmdet: `2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`, `2.10-mmcv1.2-torch1.8-cuda10.2`, `2.10-mmcv1.2-torch1.8-cuda11.1`
 
 torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
@@ -18,7 +16,9 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 * [https://hub.docker.com/repository/docker/flystarhe/mmdet](https://hub.docker.com/repository/docker/flystarhe/mmdet)
 * `docker pull flystarhe/mmdet:[镜像版本号]`
 
-`2.10-cuda10.2`, `2.10-cuda11.0`, `2.10-cuda11.1`
+`2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`, `2.10-mmcv1.2-torch1.8-cuda10.2`, `2.10-mmcv1.2-torch1.8-cuda11.1`
+
+>Run `python mmdet/utils/collect_env.py` to check built environment.
 
 ## flystarhe/torch
 

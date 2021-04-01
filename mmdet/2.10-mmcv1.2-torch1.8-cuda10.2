@@ -6,7 +6,7 @@ ARG CUDA=10.2
 ARG PYTHON_VERSION=3.8
 ARG PYTORCH=1.8.1
 ARG TORCHVISION=0.9.1
-ARG MMCV=1.2.7
+ARG MMCV=1.3.0
 ARG MMDET=2.10.0
 
 FROM nvidia/cuda:${CUDA}-cudnn${CUDNN}-devel-ubuntu18.04
@@ -39,11 +39,13 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
 
 # Install MMCV
 WORKDIR /usr/src
-ARG MMCV=1.2.7
+ARG MMCV=1.3.0
 RUN /opt/conda/bin/pip install opencv-python-headless && \
-    git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
-    git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b && \
-    MMCV_WITH_OPS=1 /opt/conda/bin/pip install -e .
+    /opt/conda/bin/pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.8.0/index.html
+
+#git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
+#git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b && \
+#MMCV_WITH_OPS=1 /opt/conda/bin/pip install -e .
 
 # Install MMDetection
 WORKDIR /usr/src
@@ -66,4 +68,4 @@ ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
 # docker build -t flystarhe/mmdet:2.10-mmcv1.2-torch1.8-cuda10.2 -f 2.10-mmcv1.2-torch1.8-cuda10.2 .
 # t=test && docker run --gpus device=0 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/mmdet:2.10-mmcv1.2-torch1.8-cuda10.2 [dev|ssh|app]
-# Updated: 2021-03-31
+# Updated: 2021-04-01
