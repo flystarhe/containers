@@ -1,0 +1,38 @@
+ARG BASE_IMAGE=nvidia/cuda:11.1.1-cudnn8-devel-ubuntu18.04
+FROM ${BASE_IMAGE} as dev-base
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        ccache \
+        cmake \
+        curl \
+        git \
+        libjpeg-dev \
+        libpng-dev \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN /usr/sbin/update-ccache-symlinks
+RUN mkdir /opt/ccache && ccache --set-config=cache_dir=/opt/ccache
+ENV PATH=/opt/conda/bin:$PATH
+
+FROM dev-base as conda
+ARG PYTHON_VERSION=3.8
+ARG MAGMA_CUDA_VERSION=magma-cuda111
+RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    chmod +x ~/miniconda.sh && \
+    ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython cython typing typing_extensions mkl mkl-include ninja && \
+    conda install -y -c pytorch ${MAGMA_CUDA_VERSION} && \
+    conda clean -ya
+
+WORKDIR /opt/pytorch
+ENV TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+RUN git clone --recursive https://github.com/pytorch/pytorch.git pytorch && cd pytorch && \
+    git checkout v1.7.1
+
+#python setup.py install
+
+# t=1.7.1-cuda11.1-devel && docker build -t dev:${t} -f ${t} --build-arg PYTHON_VERSION 3.8 .
