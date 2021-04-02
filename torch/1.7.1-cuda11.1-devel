@@ -27,6 +27,7 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     pip install opencv-python-headless
 
 WORKDIR /opt/pytorch
+ENV FORCE_CUDA=1
 ENV TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
@@ -35,20 +36,20 @@ RUN git clone --recursive https://github.com/pytorch/pytorch.git pytorch && cd p
     git submodule update --init --recursive
 #python setup.py install
 
-# Install MMCV
+WORKDIR /opt/pytorch
+RUN git clone https://github.com/pytorch/vision.git vision && cd vision && \
+    git checkout v0.8.2
+#python setup.py install
+
 WORKDIR /usr/src
-ARG MMCV=1.3.0
 RUN git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
-    git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b && \
+    git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b
 #MMCV_WITH_OPS=1 pip install -e .
 
-# Install MMDetection
 WORKDIR /usr/src
-ARG MMDET=2.10.0
-ENV FORCE_CUDA="1"
 RUN git clone https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
     git checkout e3857b5f01f974d6e5347cbfaec148be07864f0c && \
-    pip install -r requirements/build.txt && \
+    pip install -r requirements/build.txt
 #pip install --no-cache-dir -e .
 
 # Other packages
