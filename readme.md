@@ -25,7 +25,7 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
 `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
->CUDA architectures with `torch.cuda.get_arch_list()`, NVCC gencode flags with `torch.cuda.get_gencode_flags()`.
+>CUDA HOME `from torch.utils.cpp_extension import CUDA_HOME`, CUDA architectures with `torch.cuda.get_arch_list()`, NVCC gencode flags with `torch.cuda.get_gencode_flags()`.
 
 ## build and run
 ```
