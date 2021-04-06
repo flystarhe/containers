@@ -7,6 +7,8 @@
 
 mmdet: `2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`, `2.10-mmcv1.2-torch1.8-cuda10.2`, `2.10-mmcv1.2-torch1.8-cuda11.1`
 
+torch: `1.7.1-cuda11.1-abc`, `1.7.1-cuda11.1-dev`, `1.7.1-cuda11.2-dev`
+
 torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
 ## flystarhe/mmdet
@@ -22,6 +24,8 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
 * [https://hub.docker.com/repository/docker/flystarhe/torch](https://hub.docker.com/repository/docker/flystarhe/torch)
 * `docker pull flystarhe/torch:[镜像版本号]`
+
+`1.7.1-cuda11.1-abc`, `1.7.1-cuda11.1-dev`, `1.7.1-cuda11.2-dev`
 
 `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
@@ -42,13 +46,13 @@ export DOCKER_BUILDKIT=1
 docker build -t flystarhe/python:3.8 -f 3.8 --target official .
 
 docker run -it --rm --gpus all nvidia/cuda:11.1-base-ubuntu18.04 bash
-t=test && docker run -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
-t=test && docker run --gpus device=0,1 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
+t=test && docker run -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
+t=test && docker run --gpus device=0,1 -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
 ```
 
-* [http://ip:9000/?token=hi](#) for `dev`
-* `/usr/sbin/sshd -D -p 9000` for `ssh` mode
-* `python /workspace/app_tornado.py 9000 ${@:2}` for `app` mode
+* [http://ip:7000/?token=hi](#) for `dev`
+* `/usr/sbin/sshd -D -p 7000` for `ssh` mode
+* `python /workspace/app_tornado.py 7000 ${@:2}` for `app` mode
 
 ## docker hub
 ```
@@ -60,7 +64,7 @@ docker push new-repo:tagname
 ```python
 import requests
 
-url = "http://ip:9000/main"
+url = "http://ip:7000/main"
 vals = {"image": "/workspace/test.png"}
 
 response = requests.get(url, params=vals)
