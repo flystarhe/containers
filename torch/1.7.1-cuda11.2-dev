@@ -80,6 +80,6 @@ ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
 # n=test
 # t=1.7.1-cuda11.2-dev
-# docker build -t dev:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
-# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace dev:${t} [dev|ssh|app]
+# docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
+# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
 # Updated: 2021-04-06
