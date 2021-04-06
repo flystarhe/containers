@@ -1,71 +1,73 @@
-#conda install pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c conda-forge
+#conda install pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=11.1 -c pytorch -c nvidia
 #docker pull nvidia/cuda:11.1-cudnn8-devel-ubuntu18.04
 
 ARG CUDNN=8
 ARG CUDA=11.1
 ARG PYTHON_VERSION=3.8
-ARG PYTORCH=1.8.1
-ARG TORCHVISION=0.9.1
+ARG PYTORCH=1.8.0
+ARG TORCHVISION=0.9.0
 ARG MMCV=1.3.0
 ARG MMDET=2.10.0
 
 FROM nvidia/cuda:${CUDA}-cudnn${CUDNN}-devel-ubuntu18.04
 
+ENV FORCE_CUDA="1"
 ENV TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    git \
-    vim \
-    ffmpeg \
-    libsm6 \
-    libxext6 \
-    ninja-build \
-    libglib2.0-0 \
-    libxrender-dev && \
+        curl \
+        git \
+        vim \
+        ffmpeg \
+        libsm6 \
+        libxext6 \
+        ninja-build \
+        libglib2.0-0 \
+        libxrender-dev && \
     rm -rf /var/lib/apt/lists/*
 
 ARG PYTHON_VERSION=3.8
 ENV PATH=/opt/conda/bin:$PATH
+#echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile
 RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
-    echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile && \
-    /opt/conda/bin/conda install -y python=${PYTHON_VERSION} conda-build && \
-    /opt/conda/bin/conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c conda-forge
+    conda install -y python=${PYTHON_VERSION} conda-build && \
+    conda install -y pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=11.1 -c pytorch -c nvidia
 
 # Install MMCV
 WORKDIR /usr/src
 ARG MMCV=1.3.0
-RUN /opt/conda/bin/pip install opencv-python-headless && \
-    /opt/conda/bin/pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.8.0/index.html
+RUN pip install opencv-python-headless && \
+    pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.8.0/index.html
 
 #git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
 #git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b && \
-#MMCV_WITH_OPS=1 /opt/conda/bin/pip install -e .
+#MMCV_WITH_OPS=1 pip install -e .
 
 # Install MMDetection
 WORKDIR /usr/src
 ARG MMDET=2.10.0
-ENV FORCE_CUDA="1"
 RUN git clone https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
     git checkout e3857b5f01f974d6e5347cbfaec148be07864f0c && \
-    /opt/conda/bin/pip install -r requirements/build.txt && \
-    /opt/conda/bin/pip install --no-cache-dir -e .
+    pip install -r requirements/build.txt && \
+    pip install --no-cache-dir -e .
 
 # Other packages
-RUN /opt/conda/bin/pip install git+https://github.com/flystarhe/cvtk.git@main && \
-    /opt/conda/bin/pip install notebook tornado watermark && \
-    /opt/conda/bin/conda clean -ya
+RUN pip install git+https://github.com/flystarhe/cvtk.git@main && \
+    pip install notebook tornado watermark && \
+    conda clean -ya
 
 # entrypoint
 WORKDIR /workspace
 COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
-# docker build -t flystarhe/mmdet:2.10-mmcv1.2-torch1.8-cuda11.1 -f 2.10-mmcv1.2-torch1.8-cuda11.1 .
-# t=test && docker run --gpus device=0 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/mmdet:2.10-mmcv1.2-torch1.8-cuda11.1 [dev|ssh|app]
-# Updated: 2021-04-01
+# n=test
+# t=2.10-mmcv1.2-torch1.8-cuda11.1
+# docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
+# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
+# Updated: 2021-04-06

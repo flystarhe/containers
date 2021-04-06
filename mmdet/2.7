@@ -4,6 +4,7 @@ ARG CUDNN="7"
 
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
 
+ENV FORCE_CUDA="1"
 ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
@@ -21,18 +22,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/*
 
 # Install MMCV
-RUN pip install mmcv-full==1.2.1+torch1.6.0+cu101 -f https://openmmlab.oss-accelerate.aliyuncs.com/mmcv/dist/index.html && \
+RUN pip install mmcv-full==1.2.1 -f https://download.openmmlab.com/mmcv/dist/cu101/torch1.6.0/index.html && \
     pip install albumentations scikit-learn notebook networkx tornado seaborn lxml && \
     pip install git+https://github.com/flystarhe/cvtk.git@main
 
 # Install MMDetection
 WORKDIR /usr/src
-ENV FORCE_CUDA="1"
 RUN git clone -b v2.7.0 --depth 1 https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
     pip install -r requirements/build.txt && \
     pip install --no-cache-dir -e . && \
-    conda install -y conda-build && \
-    conda-develop /usr/src/mmdetection && \
     conda clean -ya
 
 # RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys
@@ -41,6 +39,8 @@ WORKDIR /workspace
 COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
-# docker build -t flystarhe/mmdet:2.7 -f 2.7 .
-# t=test && docker run --gpus device=0 -d -p 9000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/mmdet:2.7 [dev|ssh|app]
-# Updated: 2020-12-30
+# n=test
+# t=mmdet2.7
+# docker build -t build:${t} -f ${t} .
+# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
+# Updated: 2021-04-06
