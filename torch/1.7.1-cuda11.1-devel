@@ -26,26 +26,35 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     conda install -y -c pytorch ${MAGMA_CUDA_VERSION} && \
     pip install opencv-python-headless
 
-WORKDIR /opt/pytorch
 ENV FORCE_CUDA=1
 ENV TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6"
 ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
 ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+
+# Install MKL
+WORKDIR /opt/pytorch
+RUN wget https://raw.githubusercontent.com/pytorch/builder/f121b0919d799b5ea2030c92ca266cf4cddf6656/common/install_mkl.sh
+#bash ./install_mkl.sh && rm install_mkl.sh
+
+# Install PyTorch
+WORKDIR /opt/pytorch
 RUN git clone --recursive https://github.com/pytorch/pytorch.git pytorch && cd pytorch && \
-    git checkout v1.7.1 && git submodule sync && \
-    git submodule update --init --recursive
+    git checkout v1.7.1 && git submodule sync && git submodule update --init --recursive
 #python setup.py install
 
+# Install torchvision
 WORKDIR /opt/pytorch
 RUN git clone https://github.com/pytorch/vision.git vision && cd vision && \
     git checkout v0.8.2
 #python setup.py install
 
+# Install MMCV
 WORKDIR /usr/src
 RUN git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
     git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b
 #MMCV_WITH_OPS=1 pip install -e .
 
+# Install MMDetection
 WORKDIR /usr/src
 RUN git clone https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
     git checkout e3857b5f01f974d6e5347cbfaec148be07864f0c && \
@@ -63,4 +72,4 @@ RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && 
     conda config --set show_channel_urls yes
 #conda create -n myenv numpy
 
-# t=1.7.1-cuda11.1-devel && docker build -t dev:${t} -f ${t} --build-arg PYTHON_VERSION 3.8 .
+# t=1.7.1-cuda11.1-devel && docker build -t dev:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
