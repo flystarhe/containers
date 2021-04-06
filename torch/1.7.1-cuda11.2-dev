@@ -24,7 +24,8 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython cython typing typing_extensions mkl mkl-include ninja && \
     conda install -y -c pytorch ${MAGMA_CUDA_VERSION} && \
-    pip install opencv-python-headless
+    pip install opencv-python-headless && \
+    chmod -R ugo+rw /opt/conda/
 
 ENV FORCE_CUDA=1
 ENV TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6"
@@ -33,8 +34,8 @@ ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
 # Install MKL
 WORKDIR /opt/pytorch
-RUN wget https://raw.githubusercontent.com/pytorch/builder/f121b0919d799b5ea2030c92ca266cf4cddf6656/common/install_mkl.sh
-#bash ./install_mkl.sh && rm install_mkl.sh
+RUN wget https://raw.githubusercontent.com/pytorch/builder/f121b0919d799b5ea2030c92ca266cf4cddf6656/common/install_mkl.sh && \
+    bash ./install_mkl.sh && rm install_mkl.sh
 
 # Install PyTorch
 WORKDIR /opt/pytorch
