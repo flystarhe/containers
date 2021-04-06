@@ -1,0 +1,91 @@
+# syntax = docker/dockerfile:experimental
+#
+# NOTE: To build this you will need a docker version > 18.06 with
+#       experimental enabled and DOCKER_BUILDKIT=1
+#
+#       If you do not use buildkit you are not going to have a good time
+#
+#       For reference:
+#           https://docs.docker.com/develop/develop-images/build_enhancements/
+ARG BASE_IMAGE=nvidia/cuda:11.1.1-cudnn8-devel-ubuntu18.04
+FROM ${BASE_IMAGE} as dev-base
+RUN --mount=type=cache,id=apt-dev,target=/var/cache/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        ccache \
+        cmake \
+        curl \
+        git \
+        libjpeg-dev \
+        libpng-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN /usr/sbin/update-ccache-symlinks
+RUN mkdir /opt/ccache && ccache --set-config=cache_dir=/opt/ccache
+ENV PATH /opt/conda/bin:$PATH
+
+FROM dev-base as conda
+ARG PYTHON_VERSION=3.8
+RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    chmod +x ~/miniconda.sh && \
+    ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython && \
+    conda clean -ya
+
+FROM dev-base as gits
+WORKDIR /opt/pytorch
+RUN git clone --recursive https://github.com/pytorch/pytorch.git pytorch && cd pytorch && \
+    git checkout v1.7.1 && git submodule sync && \
+    git submodule update --init --recursive
+WORKDIR /opt/pytorch
+RUN git clone https://github.com/pytorch/vision.git vision && cd vision && \
+    git checkout v0.8.2
+
+FROM conda as build
+ENV FORCE_CUDA=1
+ENV TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+COPY --from=gits /opt/pytorch /opt/pytorch
+WORKDIR /opt/pytorch/pytorch
+RUN --mount=type=cache,target=/opt/ccache \
+    python setup.py install
+WORKDIR /opt/pytorch/vision
+RUN --mount=type=cache,target=/opt/ccache \
+    python setup.py install
+
+FROM conda as conda-installs
+RUN conda install -c pytorch -c nvidia -y pytorch torchvision cudatoolkit=11.1 && \
+    conda clean -ya
+
+FROM ${BASE_IMAGE} as official
+LABEL com.nvidia.volumes.needed="nvidia_driver"
+RUN --mount=type=cache,id=apt-final,target=/var/cache/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        libjpeg-dev \
+        libpng-dev \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+COPY --from=conda-installs /opt/conda /opt/conda
+ENV PATH /opt/conda/bin:$PATH
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+FROM official as dev
+COPY --from=build /opt/conda /opt/conda
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /usr/src/
+ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=1.7.1-cuda11.1-abc
+# docker build -t dev:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
+# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace dev:${t} [dev|ssh|app]
+# Updated: 2021-04-06
