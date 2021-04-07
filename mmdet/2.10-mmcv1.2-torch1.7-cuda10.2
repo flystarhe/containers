@@ -42,10 +42,7 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
 WORKDIR /usr/src
 ARG MMCV=1.2.7
 RUN pip install opencv-python-headless && \
-    pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.7.0/index.html && \
-    git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
-    git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b
-#MMCV_WITH_OPS=1 pip install -e .
+    pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.7.0/index.html
 
 # Install MMDetection
 WORKDIR /usr/src
@@ -58,6 +55,12 @@ RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.g
 RUN pip install git+https://github.com/flystarhe/cvtk.git@main && \
     pip install notebook tornado watermark && \
     conda clean -ya
+
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
+    conda config --set show_channel_urls yes
+#conda create -n myenv numpy
 
 # entrypoint
 WORKDIR /workspace
