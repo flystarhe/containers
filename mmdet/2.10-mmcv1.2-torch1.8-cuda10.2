@@ -32,9 +32,11 @@ ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 # Install MMCV
 WORKDIR /usr/src
 ARG MMCV=1.2.7
-RUN git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
-    git checkout v${MMCV} && \
-    MMCV_WITH_OPS=1 pip install -e .
+RUN pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.8.0/index.html && \
+    git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
+    git checkout v${MMCV}
+#pip uninstall -y mmcv-full
+#MMCV_WITH_OPS=1 pip install -e .
 
 # Install MMDetection
 WORKDIR /usr/src
