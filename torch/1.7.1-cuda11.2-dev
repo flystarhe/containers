@@ -1,4 +1,13 @@
-ARG BASE_IMAGE=nvidia/cuda:11.2.2-cudnn8-devel-ubuntu18.04
+# syntax = docker/dockerfile:experimental
+#
+# NOTE: To build this you will need a docker version > 18.06 with
+#       experimental enabled and DOCKER_BUILDKIT=1
+#
+#       If you do not use buildkit you are not going to have a good time
+#
+#       For reference:
+#           https://docs.docker.com/develop/develop-images/build_enhancements/
+ARG BASE_IMAGE=nvidia/cuda:11.2-cudnn8-devel-ubuntu18.04
 FROM ${BASE_IMAGE} as dev-base
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
@@ -24,7 +33,8 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython cython typing typing_extensions mkl mkl-include ninja && \
     conda install -y -c pytorch ${MAGMA_CUDA_VERSION} && \
-    pip install opencv-python-headless && \
+    pip install notebook tornado watermark opencv-python-headless && \
+    pip install git+https://github.com/flystarhe/cvtk.git@main && \
     chmod -R ugo+rw /opt/conda/
 
 ENV FORCE_CUDA=1
@@ -50,28 +60,11 @@ RUN git clone https://github.com/pytorch/vision.git vision && cd vision && \
     git checkout v0.8.2 && \
     python setup.py install
 
-# Install MMCV
-WORKDIR /usr/src
-RUN git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
-    git checkout ca47ae1f87d16a9b8a9bd6cd910fef3ce5d0306b
-#MMCV_WITH_OPS=1 pip install -e .
-
-# Install MMDetection
-WORKDIR /usr/src
-RUN git clone https://github.com/open-mmlab/mmdetection.git mmdetection && cd mmdetection && \
-    git checkout e3857b5f01f974d6e5347cbfaec148be07864f0c && \
-    pip install -r requirements/build.txt
-#pip install --no-cache-dir -e .
-
-# Other packages
-RUN pip install git+https://github.com/flystarhe/cvtk.git@main && \
-    pip install notebook tornado watermark && \
-    conda clean -ya
-
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
-    conda config --set show_channel_urls yes
+    conda config --set show_channel_urls yes && \
+    conda clean -ya
 #conda create -n myenv numpy
 
 # entrypoint

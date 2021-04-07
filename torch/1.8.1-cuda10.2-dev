@@ -1,11 +1,3 @@
-#conda install pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=10.2 -c pytorch
-#docker pull nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
-
-ARG CUDA_VERSION=10.2
-ARG PYTHON_VERSION=3.8
-ARG PYTORCH_VERSION=1.8.1
-ARG TORCHVISION_VERSION=0.9.1
-
 FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -23,18 +15,16 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
-    conda install -y python=${PYTHON_VERSION} conda-build && \
-    conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=10.2 -c pytorch
-
-# Other packages
-RUN pip install git+https://github.com/flystarhe/cvtk.git@main && \
-    pip install notebook tornado watermark && \
-    conda clean -ya
+    conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython && \
+    conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=10.2 -c pytorch && \
+    pip install notebook tornado watermark opencv-python-headless && \
+    pip install git+https://github.com/flystarhe/cvtk.git@main
 
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
-    conda config --set show_channel_urls yes
+    conda config --set show_channel_urls yes && \
+    conda clean -ya
 #conda create -n myenv numpy
 
 # entrypoint
