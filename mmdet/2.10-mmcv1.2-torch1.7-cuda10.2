@@ -1,20 +1,4 @@
-#conda install pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=10.2 -c pytorch
-#docker pull nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
-
-ARG CUDNN=8
-ARG CUDA=10.2
-ARG PYTHON_VERSION=3.8
-ARG PYTORCH=1.7.1
-ARG TORCHVISION=0.8.2
-ARG MMCV=1.2.7
-ARG MMDET=2.10.0
-
-FROM nvidia/cuda:${CUDA}-cudnn${CUDNN}-devel-ubuntu18.04
-
-ENV FORCE_CUDA="1"
-ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0 7.5"
-ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
-ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
@@ -35,14 +19,20 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
-    conda install -y python=${PYTHON_VERSION} conda-build && \
-    conda install -y pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=10.2 -c pytorch
+    conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython && \
+    conda install -y pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=10.2 -c pytorch && \
+    pip install notebook tornado watermark opencv-python-headless && \
+    pip install git+https://github.com/flystarhe/cvtk.git@main
+
+ENV FORCE_CUDA="1"
+ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0 7.5"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
 # Install MMCV
 WORKDIR /usr/src
 ARG MMCV=1.2.7
-RUN pip install opencv-python-headless && \
-    pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.7.0/index.html
+RUN pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu102/torch1.7.0/index.html
 
 # Install MMDetection
 WORKDIR /usr/src
@@ -51,15 +41,11 @@ RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.g
     pip install -r requirements/build.txt && \
     pip install --no-cache-dir -e .
 
-# Other packages
-RUN pip install git+https://github.com/flystarhe/cvtk.git@main && \
-    pip install notebook tornado watermark && \
-    conda clean -ya
-
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
-    conda config --set show_channel_urls yes
+    conda config --set show_channel_urls yes && \
+    conda clean -ya
 #conda create -n myenv numpy
 
 # entrypoint
