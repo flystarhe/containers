@@ -1,11 +1,11 @@
-#conda install pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=11.1 -c pytorch -c nvidia
+#conda install pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c nvidia
 #docker pull nvidia/cuda:11.1-cudnn8-devel-ubuntu18.04
 
 ARG CUDNN=8
 ARG CUDA=11.1
 ARG PYTHON_VERSION=3.8
-ARG PYTORCH=1.8.0
-ARG TORCHVISION=0.9.0
+ARG PYTORCH=1.8.1
+ARG TORCHVISION=0.9.1
 ARG MMCV=1.3.0
 ARG MMDET=2.10.0
 
@@ -36,7 +36,7 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
-    conda install -y pytorch==1.8.0 torchvision==0.9.0 cudatoolkit=11.1 -c pytorch -c nvidia
+    conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c nvidia
 
 # Install MMCV
 WORKDIR /usr/src
