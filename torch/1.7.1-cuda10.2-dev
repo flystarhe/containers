@@ -1,0 +1,40 @@
+FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        libjpeg-dev \
+        libpng-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG PYTHON_VERSION=3.8
+ENV PATH=/opt/conda/bin:$PATH
+#echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile
+RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    chmod +x ~/miniconda.sh && \
+    ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython && \
+    conda install -y pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=10.2 -c pytorch && \
+    pip install notebook tornado watermark opencv-python-headless && \
+    pip install git+https://github.com/flystarhe/cvtk.git@main && \
+    chmod -R ugo+rw /opt/conda/
+
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
+    conda config --set show_channel_urls yes && \
+    conda clean -ya
+#conda create -n myenv numpy
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /usr/src/
+ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=1.7.1-cuda10.2-dev
+# docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
+# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
+# Updated: 2021-04-06
