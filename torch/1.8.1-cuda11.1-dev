@@ -18,7 +18,8 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython && \
     conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c nvidia && \
     pip install notebook tornado watermark opencv-python-headless && \
-    pip install git+https://github.com/flystarhe/cvtk.git@main
+    pip install git+https://github.com/flystarhe/cvtk.git@main && \
+    chmod -R ugo+rw /opt/conda/
 
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
