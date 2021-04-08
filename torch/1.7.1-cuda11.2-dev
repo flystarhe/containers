@@ -39,7 +39,9 @@ RUN wget https://raw.githubusercontent.com/pytorch/builder/f121b0919d799b5ea2030
 WORKDIR /opt/pytorch
 RUN git clone --recursive https://github.com/pytorch/pytorch.git pytorch && cd pytorch && \
     git checkout v1.7.1 && git submodule sync && \
-    git submodule update --init --recursive
+    git submodule update --init --recursive && \
+    git clean -d -f -f && \
+    git clean -d -f -f
 #python setup.py install
 
 # Install torchvision
