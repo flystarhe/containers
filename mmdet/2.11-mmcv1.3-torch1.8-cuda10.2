@@ -19,9 +19,10 @@ RUN curl -o ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
-    conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython && \
+    conda install -y python=${PYTHON_VERSION} conda-build && \
+    pip install opencv-python-headless && \
+    pip install notebook tornado watermark && \
     conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=10.2 -c pytorch && \
-    pip install notebook tornado watermark opencv-python-headless && \
     pip install git+https://github.com/flystarhe/cvtk.git@main
 
 ENV FORCE_CUDA="1"

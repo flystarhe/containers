@@ -19,9 +19,10 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
-    conda install -y python=${PYTHON_VERSION} conda-build pyyaml numpy ipython cython typing typing_extensions mkl mkl-include ninja && \
+    conda install -y python=${PYTHON_VERSION} conda-build cmake cffi mkl mkl-include ninja dataclasses && \
+    pip install opencv-python-headless && \
+    pip install notebook tornado watermark && \
     conda install -y -c pytorch magma-cuda111 && \
-    pip install notebook tornado watermark opencv-python-headless && \
     pip install git+https://github.com/flystarhe/cvtk.git@main && \
     chmod -R ugo+rw /opt/conda/
 
