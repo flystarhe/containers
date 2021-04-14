@@ -1,6 +1,7 @@
 FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        openssh-server \
         curl \
         git \
         vim \
@@ -50,6 +51,7 @@ RUN git clone https://github.com/open-mmlab/mmdetection.git mmdetection && cd mm
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
+    mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys && \
     conda config --set show_channel_urls yes && \
     conda clean -ya
 #conda create -n myenv numpy
