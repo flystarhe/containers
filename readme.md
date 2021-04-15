@@ -36,7 +36,7 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 * [https://hub.docker.com/repository/docker/flystarhe/yolov5](https://hub.docker.com/repository/docker/flystarhe/yolov5)
 * `docker pull flystarhe/yolov5:[镜像版本号]`
 
-`5.0`
+`5.0`, `5.0-torch1.8-cuda11.1`
 
 ## build and run
 ```
