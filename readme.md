@@ -31,6 +31,13 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
 >CUDA HOME `from torch.utils.cpp_extension import CUDA_HOME`, CUDA architectures with `torch.cuda.get_arch_list()`, NVCC gencode flags with `torch.cuda.get_gencode_flags()`.
 
+## flystarhe/yolov5
+
+* [https://hub.docker.com/repository/docker/flystarhe/yolov5](https://hub.docker.com/repository/docker/flystarhe/yolov5)
+* `docker pull flystarhe/yolov5:[镜像版本号]`
+
+`5.0`
+
 ## build and run
 ```
 docker save -o mmdet2.8-21.02.tar mmdet:2.8
