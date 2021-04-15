@@ -5,9 +5,11 @@
 * [https://cr.console.aliyun.com/cn-hangzhou/instance/repositories](https://cr.console.aliyun.com/cn-hangzhou/instance/repositories)
 * `docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:[镜像版本号]`
 
-mmdet: `2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`, `2.10-mmcv1.2-torch1.8-cuda10.2`, `2.10-mmcv1.2-torch1.8-cuda11.1`
+mmdet: `2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`
 
-torch: `1.7.1-cuda11.1-abc`, `1.7.1-cuda11.1-dev`, `1.7.1-cuda11.2-dev`
+mmdet: `2.11-mmcv1.3-torch1.8-cuda10.2`, `2.11-mmcv1.3-torch1.8-cuda11.1`
+
+torch: `1.7.1-cuda10.2-dev`, `1.7.1-cuda11.0-dev`
 
 torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
@@ -16,7 +18,9 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 * [https://hub.docker.com/repository/docker/flystarhe/mmdet](https://hub.docker.com/repository/docker/flystarhe/mmdet)
 * `docker pull flystarhe/mmdet:[镜像版本号]`
 
-`2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`, `2.10-mmcv1.2-torch1.8-cuda10.2`, `2.10-mmcv1.2-torch1.8-cuda11.1`
+`2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`
+
+`2.11-mmcv1.3-torch1.8-cuda10.2`, `2.11-mmcv1.3-torch1.8-cuda11.1`
 
 >Run `python mmdet/utils/collect_env.py` to check built environment.
 
@@ -25,7 +29,7 @@ torch: `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 * [https://hub.docker.com/repository/docker/flystarhe/torch](https://hub.docker.com/repository/docker/flystarhe/torch)
 * `docker pull flystarhe/torch:[镜像版本号]`
 
-`1.7.1-cuda11.1-abc`, `1.7.1-cuda11.1-dev`, `1.7.1-cuda11.2-dev`
+`1.7.1-cuda10.2-dev`, `1.7.1-cuda11.0-dev`
 
 `1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
 
@@ -89,6 +93,7 @@ print(response.json())
 # RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys
 
 # sed -i 's/http:\/\/archive.ubuntu.com/https:\/\/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch
 # conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
 # rm -rf /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/nvidia-ml.list
 # pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
