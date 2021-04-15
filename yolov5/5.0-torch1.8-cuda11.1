@@ -31,7 +31,8 @@ WORKDIR /usr/src
 ARG YOLO=5.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
     pip install coremltools onnx gsutil && \
-    pip install -r requirements.txt
+    pip install -r requirements.txt && \
+    bash weights/download_weights.sh
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
