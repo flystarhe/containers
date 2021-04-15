@@ -1,0 +1,42 @@
+FROM nvcr.io/nvidia/pytorch:21.02-py3
+# https://ngc.nvidia.com/catalog/containers/nvidia:pytorch
+# https://github.com/pytorch/pytorch/commit/52ea372
+# NVIDIA Driver release 460.27.04 or later
+# Ubuntu 20.04
+# CUDA 11.2.0
+# cuDNN 8.1.0.77
+# Python 3.8
+# PyTorch 1.8
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        openssh-server \
+        curl \
+        git \
+        vim \
+        zip \
+        htop \
+        screen \
+        libgl1-mesa-glx && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src
+ARG YOLO=5.0
+RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
+    pip uninstall -y nvidia-tensorboard nvidia-tensorboard-plugin-dlprof && \
+    pip install coremltools onnx gsutil notebook tornado watermark && \
+    pip install -r requirements.txt
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip cache purge
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /usr/src/
+ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=5.0
+# docker build -t build:${t} -f ${t} --build-arg YOLO=5.0 .
+# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
+# Updated: 2021-04-15
