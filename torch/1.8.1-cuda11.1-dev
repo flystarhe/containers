@@ -3,11 +3,11 @@ FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu18.04
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         openssh-server \
+        libjpeg-dev \
+        libpng-dev \
         curl \
         git \
-        vim \
-        libjpeg-dev \
-        libpng-dev && \
+        vim && \
     rm -rf /var/lib/apt/lists/*
 
 ARG PYTHON_VERSION=3.8
@@ -18,17 +18,19 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
-    pip install opencv-python-headless && \
-    pip install notebook tornado watermark && \
     conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c nvidia && \
     pip install git+https://github.com/flystarhe/cvtk.git@main && \
+    pip install notebook tornado watermark && \
+    pip install opencv-python-headless && \
     chmod -R ugo+rw /opt/conda/
 
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
-    mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys && \
     conda config --set show_channel_urls yes && \
+    pip cache purge && \
     conda clean -ya
 #conda create -n myenv numpy
 

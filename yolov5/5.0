@@ -9,6 +9,7 @@ FROM nvcr.io/nvidia/pytorch:21.02-py3
 # PyTorch 1.8
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
         openssh-server \
         curl \
         git \
@@ -26,7 +27,8 @@ RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yo
     pip install coremltools onnx gsutil notebook tornado watermark && \
     pip install -r requirements.txt
 
-RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && echo "# ssh keys" > ~/.ssh/authorized_keys && \
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     pip cache purge
 
