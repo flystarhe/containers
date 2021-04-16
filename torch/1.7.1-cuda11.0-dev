@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ARG PYTHON_VERSION=3.8
 ENV PATH=/opt/conda/bin:$PATH
-#echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile
 RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     chmod +x ~/miniconda.sh && \
     ~/miniconda.sh -b -p /opt/conda && \
@@ -21,11 +20,11 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     conda install -y pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch && \
     pip install git+https://github.com/flystarhe/cvtk.git@main && \
     pip install notebook tornado watermark && \
-    pip install opencv-python-headless && \
     chmod -R ugo+rw /opt/conda/
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
