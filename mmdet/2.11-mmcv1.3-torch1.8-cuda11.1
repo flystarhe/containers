@@ -35,7 +35,7 @@ ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
 
 # Install MMCV
 WORKDIR /usr/src
-ARG MMCV=1.3.0
+ARG MMCV=1.3.3
 RUN pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.8.0/index.html && \
     git clone https://github.com/open-mmlab/mmcv.git mmcv && cd mmcv && \
     git checkout v${MMCV}
@@ -70,4 +70,4 @@ ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # t=2.11-mmcv1.3-torch1.8-cuda11.1
 # docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
 # docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
-# Updated: 2021-04-16
+# Updated: 2021-05-08
