@@ -7,7 +7,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev \
         curl \
         git \
-        vim && \
+        vim \
+        tar \
+        zip \
+        unzip && \
     rm -rf /var/lib/apt/lists/*
 
 ARG PYTHON_VERSION=3.8

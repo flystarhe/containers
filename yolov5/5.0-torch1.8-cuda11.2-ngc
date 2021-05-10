@@ -16,7 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
         git \
         vim \
+        tar \
         zip \
+        unzip \
         htop \
         screen \
         libgl1-mesa-glx && \
