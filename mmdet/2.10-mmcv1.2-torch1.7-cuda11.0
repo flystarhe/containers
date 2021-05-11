@@ -1,6 +1,7 @@
 FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         openssh-server \
         libjpeg-dev \
@@ -11,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         tar \
         zip \
         unzip \
+        tzdata \
         ffmpeg \
         libsm6 \
         libxext6 \

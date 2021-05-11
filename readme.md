@@ -91,3 +91,15 @@ print(response.json())
 # pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 # https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/
 ```
+
+timezone
+```Dockerfile
+FROM ubuntu
+
+# 设置localtime
+# 此处需要优先设置localtime，否则安装tzdata将会进入时区选择
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+# 安装tzdata
+RUN apt-get update && apt-get install -y tzdata
+```
