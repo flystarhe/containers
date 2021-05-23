@@ -12,7 +12,7 @@
 
 `2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`
 
-`2.11-mmcv1.3-torch1.7-cuda11.0`, `2.11-mmcv1.3-torch1.8-cuda11.1`
+`2.11-mmcv1.3-torch1.7-cuda11.0`
 
 >Run `python mmdet/utils/collect_env.py` to check built environment.
 
