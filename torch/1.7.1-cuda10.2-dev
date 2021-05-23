@@ -23,8 +23,7 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     conda install -y pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=10.2 -c pytorch && \
-    pip install git+https://github.com/flystarhe/cvtk.git@main && \
-    pip install notebook tornado watermark && \
+    pip install notebook tornado watermark cvtk && \
     chmod -R ugo+rw /opt/conda/
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
@@ -47,4 +46,4 @@ ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # t=1.7.1-cuda10.2-dev
 # docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
 # docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
-# Updated: 2021-04-06
+# Updated: 2021-05-23
