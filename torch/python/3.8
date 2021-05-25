@@ -47,7 +47,7 @@ RUN --mount=type=cache,id=apt-final,target=/var/cache/apt \
         libjpeg-dev \
         libpng-dev && \
     rm -rf /var/lib/apt/lists/* && \
-    echo "export PATH=/opt/conda/bin:$PATH" >> /etc/profile
+    echo "export PATH=/opt/conda/bin:$PATH" >> ~/.bashrc
 COPY --from=conda-installs /opt/conda /opt/conda
 ENV PATH="/opt/conda/bin:$PATH"
 
