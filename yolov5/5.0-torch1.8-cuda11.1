@@ -24,16 +24,15 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c nvidia && \
-    pip install git+https://github.com/flystarhe/cvtk.git@main && \
-    pip install notebook tornado watermark && \
+    pip install notebook tornado watermark cvtk ipynbname && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /usr/src
 ARG YOLO=5.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
     pip install coremltools onnx gsutil && \
-    pip install -r requirements.txt
-#bash weights/download_weights.sh
+    pip install -r requirements.txt && \
+    bash weights/download_weights.sh
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
