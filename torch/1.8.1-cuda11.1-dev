@@ -23,7 +23,7 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     conda install -y pytorch==1.8.1 torchvision==0.9.1 cudatoolkit=11.1 -c pytorch -c nvidia && \
-    pip install notebook tornado watermark cvtk && \
+    pip install notebook tornado watermark cvtk ipynbname && \
     chmod -R ugo+rw /opt/conda/
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
