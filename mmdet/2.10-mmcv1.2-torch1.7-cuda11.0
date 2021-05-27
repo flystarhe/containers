@@ -29,7 +29,7 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     conda install -y pytorch==1.7.1 torchvision==0.8.2 cudatoolkit=11.0 -c pytorch && \
-    pip install notebook tornado watermark cvtk ipynbname && \
+    pip install notebook tornado watermark cvtk && \
     chmod -R ugo+rw /opt/conda/
 
 ENV FORCE_CUDA="1"
