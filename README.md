@@ -53,9 +53,9 @@ t=test && docker run -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/wo
 t=test && docker run --gpus device=0,1 -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
 ```
 
-* [http://ip:7000/?token=hi](#) for `dev`
 * `/usr/sbin/sshd -D -p 7000` for `ssh` mode
 * `python /workspace/app_tornado.py 7000 ${@:2}` for `app` mode
+* `http://ip:7000/?token=hi` for `notebook` mode or other command
 
 ## docker hub
 ```

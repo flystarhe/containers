@@ -8,6 +8,9 @@ then
 elif [ "${MODE}" = 'app' ]
 then
     nohup python /workspace/app_tornado.py 9000 ${@:2} > /workspace/nohup.out 2>&1
-else
+elif [ "${MODE}" = 'notebook' ]
+then
     jupyter notebook --ip='*' --port=9000 --notebook-dir='/workspace' --NotebookApp.token='hi' --no-browser --allow-root
+else
+    tail -f /dev/null
 fi
