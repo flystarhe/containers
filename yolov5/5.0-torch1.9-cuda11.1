@@ -1,0 +1,59 @@
+FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu18.04
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        openssh-server \
+        libjpeg-dev \
+        libpng-dev \
+        curl \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        screen \
+        ffmpeg \
+        tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG PYTHON_VERSION=3.8
+ENV PATH=/opt/conda/bin:$PATH
+RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    chmod +x ~/miniconda.sh && \
+    ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    conda install -y python=${PYTHON_VERSION} conda-build && \
+    conda install -y pytorch==1.9.0 torchvision==0.10.0 cudatoolkit=11.1 -c pytorch -c nvidia && \
+    pip install notebook tornado watermark cvtk papermill && \
+    chmod -R ugo+rw /opt/conda/
+
+WORKDIR /usr/src
+RUN git clone https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
+    git checkout -B main fad57c2 && \
+    pip install -r requirements.txt && \
+    pip install coremltools onnx gsutil && \
+    bash data/scripts/download_weights.sh
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=/opt/conda/bin:$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
+    conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \
+    conda config --set show_channel_urls yes && \
+    pip cache purge && \
+    conda clean -ya
+#conda create -n myenv numpy
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /usr/src/
+ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=5.0-torch1.9-cuda11.1
+# docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
+# docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
+# Updated: 2021-09-03
