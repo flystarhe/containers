@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu18.04
+FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu20.04
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -12,6 +12,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
         tar \
         zip \
         unzip \
+        ffmpeg \
         tzdata && \
     rm -rf /var/lib/apt/lists/*
 

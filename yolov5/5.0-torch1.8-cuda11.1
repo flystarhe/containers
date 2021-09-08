@@ -1,6 +1,7 @@
-FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu18.04
+FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu20.04
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         openssh-server \
         libjpeg-dev \
@@ -13,7 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         htop \
         screen \
-        libgl1-mesa-glx && \
+        ffmpeg \
+        tzdata && \
     rm -rf /var/lib/apt/lists/*
 
 ARG PYTHON_VERSION=3.8
@@ -30,8 +32,9 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
 WORKDIR /usr/src
 ARG YOLO=5.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
-    pip install coremltools onnx gsutil && \
+    conda update -y pip && \
     pip install -r requirements.txt && \
+    pip install coremltools onnx gsutil && \
     bash weights/download_weights.sh
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
@@ -54,4 +57,4 @@ ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # t=5.0-torch1.8-cuda11.1
 # docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
 # docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
-# Updated: 2021-04-16
+# Updated: 2021-09-08
