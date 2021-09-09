@@ -1,4 +1,5 @@
-FROM nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
+FROM nvcr.io/nvidia/pytorch:20.12-py3
+# https://ngc.nvidia.com/catalog/containers/nvidia:pytorch
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -18,23 +19,15 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
         tzdata && \
     rm -rf /var/lib/apt/lists/*
 
-ARG PYTHON_VERSION=3.8
-ENV PATH=/opt/conda/bin:$PATH
-RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    chmod +x ~/miniconda.sh && \
-    ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh && \
-    conda install -y python=${PYTHON_VERSION} conda-build && \
-    conda install -y pytorch==1.9.0 torchvision==0.10.0 cudatoolkit=10.2 -c pytorch && \
-    pip install notebook tornado watermark cvtk papermill && \
-    chmod -R ugo+rw /opt/conda/
-
 WORKDIR /usr/src
 ARG YOLO=5.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
+    pip uninstall -y nvidia-tensorboard nvidia-tensorboard-plugin-dlprof && \
+    pip uninstall -y torch torchtext torchvision && \
     python -m pip install --upgrade pip && \
+    pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 -f https://download.pytorch.org/whl/torch_stable.html && \
+    pip install notebook tornado watermark cvtk papermill coremltools onnx gsutil && \
     pip install -r requirements.txt && \
-    pip install coremltools onnx gsutil && \
     bash weights/download_weights.sh
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
@@ -54,7 +47,7 @@ COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
 # n=test
-# t=5.0-torch1.9-cuda10.2
+# t=5.0-torch1.9-cuda11.1-ngc
 # docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
 # docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
 # Updated: 2021-09-08

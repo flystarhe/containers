@@ -32,7 +32,7 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
 WORKDIR /usr/src
 ARG YOLO=5.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
-    conda update -y pip && \
+    python -m pip install --upgrade pip && \
     pip install -r requirements.txt && \
     pip install coremltools onnx gsutil && \
     bash weights/download_weights.sh

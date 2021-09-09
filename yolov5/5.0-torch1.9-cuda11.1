@@ -25,14 +25,14 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
-    conda install -y pytorch==1.9.0 torchvision==0.10.0 cudatoolkit=11.1 -c pytorch -c nvidia && \
+    pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 -f https://download.pytorch.org/whl/torch_stable.html && \
     pip install notebook tornado watermark cvtk papermill && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /usr/src
 ARG YOLO=5.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
-    conda update -y pip && \
+    python -m pip install --upgrade pip && \
     pip install -r requirements.txt && \
     pip install coremltools onnx gsutil && \
     bash weights/download_weights.sh
