@@ -22,6 +22,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
 WORKDIR /usr/src
 ARG YOLO=5.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
+    git switch -c main && \
     pip uninstall -y nvidia-tensorboard nvidia-tensorboard-plugin-dlprof && \
     pip uninstall -y torch torchtext torchvision && \
     python -m pip install --upgrade pip && \
