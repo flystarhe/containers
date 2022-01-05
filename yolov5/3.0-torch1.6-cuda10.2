@@ -25,12 +25,12 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
-    pip install torch==1.8.1+cu102 torchvision==0.9.1+cu102 -f https://download.pytorch.org/whl/torch_stable.html && \
+    pip install torch==1.6.0 torchvision==0.7.0 && \
     pip install notebook tornado watermark cvtk papermill && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /usr/src
-ARG YOLO=5.0
+ARG YOLO=3.0
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
     git switch -c main && \
     python -m pip install --upgrade pip && \
@@ -55,7 +55,7 @@ COPY entrypoint.sh /usr/src/
 ENTRYPOINT ["/bin/bash", "/usr/src/entrypoint.sh"]
 # Build and run
 # n=test
-# t=5.0-torch1.8-cuda10.2
+# t=3.0-torch1.6-cuda10.2
 # docker build -t build:${t} -f ${t} --build-arg PYTHON_VERSION=3.8 .
 # docker run --gpus device=0 -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)"/${n}:/workspace build:${t} [dev|ssh|app]
-# Updated: 2021-09-08
+# Updated: 2022-01-05
