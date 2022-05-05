@@ -2,6 +2,7 @@ FROM nvidia/cuda:11.1-cudnn8-devel-ubuntu20.04
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
         ca-certificates \
         openssh-server \
         libjpeg-dev \
@@ -12,6 +13,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
         tar \
         zip \
         unzip \
+        tmux \
         ffmpeg \
         tzdata && \
     rm -rf /var/lib/apt/lists/*
@@ -24,7 +26,7 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html && \
-    pip install notebook tornado watermark cvtk papermill && \
+    pip install notebook tornado watermark hello2 papermill nni && \
     chmod -R ugo+rw /opt/conda/
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \

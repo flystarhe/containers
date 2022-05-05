@@ -14,7 +14,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
         zip \
         unzip \
         htop \
-        screen \
+        tmux \
         ffmpeg \
         tzdata && \
     rm -rf /var/lib/apt/lists/*
@@ -27,7 +27,7 @@ RUN curl -fsSL -v -o ~/miniconda.sh -O https://repo.anaconda.com/miniconda/Minic
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     pip install torch==1.10.2+cu113 torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/torch_stable.html && \
-    pip install notebook tornado watermark papermill nni && \
+    pip install notebook tornado watermark hello2 papermill nni && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /usr/src
