@@ -21,9 +21,7 @@
 * [https://hub.docker.com/repository/docker/flystarhe/torch](https://hub.docker.com/repository/docker/flystarhe/torch)
 * `docker pull flystarhe/torch:[镜像版本号]`
 
-`1.7.1-cuda10.2-dev`, `1.7.1-cuda11.0-dev`
-
-`1.8.1-cuda10.2-dev`, `1.8.1-cuda11.1-dev`
+`1.8.1-cuda11.1-dev`
 
 >CUDA HOME `from torch.utils.cpp_extension import CUDA_HOME`, CUDA architectures with `torch.cuda.get_arch_list()`, NVCC gencode flags with `torch.cuda.get_gencode_flags()`.
 
@@ -32,7 +30,7 @@
 * [https://hub.docker.com/repository/docker/flystarhe/yolov5](https://hub.docker.com/repository/docker/flystarhe/yolov5)
 * `docker pull flystarhe/yolov5:[镜像版本号]`
 
-`5.0-torch1.8-cuda11.1`, `5.0-torch1.8-cuda11.2-ngc`
+`6.1-torch1.10-cuda11.3`
 
 ## build and run
 ```
