@@ -1,5 +1,7 @@
 FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 
+ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
+
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
@@ -22,8 +24,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
 ARG PYTHON_VERSION=3.9
 ENV PATH=/opt/conda/bin:$PATH
 RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    chmod +x ~/miniconda.sh && \
-    ~/miniconda.sh -b -p /opt/conda && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     pip install torch==1.10.2+cu113 torchvision==0.11.3+cu113 -f https://download.pytorch.org/whl/torch_stable.html && \
@@ -34,12 +35,9 @@ WORKDIR /usr/src
 ARG YOLO=6.1
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
     git switch -c main && \
-    python -m pip install --upgrade pip && \
+    python -m pip install -U pip && \
     pip install -r requirements.txt && \
-    pip install albumentations wandb gsutil && \
-    bash data/scripts/download_weights.sh
-
-ADD https://ultralytics.com/assets/Arial.ttf /root/.config/Ultralytics/
+    pip install albumentations wandb gsutil
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
