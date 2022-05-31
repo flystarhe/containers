@@ -46,6 +46,7 @@ WORKDIR /opt/src
 ARG MMCV
 ARG MMSEG
 RUN git clone -b v${MMSEG} --depth 1 https://github.com/open-mmlab/mmsegmentation.git && cd mmsegmentation && \
+    pip install notebook tornado watermark opencv-python hello2 papermill && \
     pip install --no-cache-dir mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.11.0/index.html && \
     pip install -r requirements.txt && \
     pip install --no-cache-dir -e .
