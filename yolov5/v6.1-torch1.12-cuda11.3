@@ -3,14 +3,14 @@ ARG YOLO="6.1"
 
 FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 
-ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
+ENV OMP_NUM_THREADS=8
+ENV PATH=/opt/conda/bin:$PATH
 
 # To fix GPG key error when running apt-get update
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
 
-ENV OMP_NUM_THREADS=8
-ENV PATH=/opt/conda/bin:$PATH
+ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
