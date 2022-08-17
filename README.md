@@ -10,9 +10,7 @@
 * [https://hub.docker.com/repository/docker/flystarhe/mmdet](https://hub.docker.com/repository/docker/flystarhe/mmdet)
 * `docker pull flystarhe/mmdet:[镜像版本号]`
 
-`2.10-mmcv1.2-torch1.7-cuda10.2`, `2.10-mmcv1.2-torch1.7-cuda11.0`
-
-`2.11-mmcv1.3-torch1.7-cuda11.0`
+`mmdet/v2.25.1`
 
 >Run `python mmdet/utils/collect_env.py` to check built environment.
 
@@ -30,7 +28,7 @@
 * [https://hub.docker.com/repository/docker/flystarhe/yolov5](https://hub.docker.com/repository/docker/flystarhe/yolov5)
 * `docker pull flystarhe/yolov5:[镜像版本号]`
 
-`6.1-torch1.10-cuda11.3`
+`v6.1-torch1.12-cuda11.3`
 
 ## build and run
 ```
@@ -48,7 +46,7 @@ docker build -t flystarhe/python:3.8 -f 3.8 --target official .
 
 docker run -it --rm --gpus all nvidia/cuda:11.1-base-ubuntu18.04 bash
 t=test && docker run -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
-t=test && docker run --gpus device=0,1 -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
+t=test && docker run --gpus '"device=0,1"' -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
 ```
 
 * `/usr/sbin/sshd -D -p 7000` for `ssh` mode
@@ -57,8 +55,10 @@ t=test && docker run --gpus device=0,1 -d -p 7000:9000 --ipc=host --name ${t} -v
 
 ## docker hub
 ```
+docker login -u flystarhe
 docker tag local-image:tagname new-repo:tagname
 docker push new-repo:tagname
+docker logout
 ```
 
 ## test app
