@@ -53,7 +53,10 @@ RUN git clone -b v${MMSEG} --depth 1 https://github.com/open-mmlab/mmsegmentatio
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
-    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip cache purge && \
+    conda clean -ya
 
 # entrypoint
 WORKDIR /workspace
