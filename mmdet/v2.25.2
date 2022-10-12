@@ -66,5 +66,5 @@ ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
 # n=test
 # t=v2.25.2
 # docker build -t flystarhe/mmdet:${t} -f ${t} .
-# docker run --gpus all -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)":/workspace flystarhe/mmdet:${t} [notebook|ssh|app]
+# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)":/workspace flystarhe/mmdet:${t} [notebook|ssh|app]
 # Updated: 2022-10-08
