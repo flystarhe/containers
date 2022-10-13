@@ -39,7 +39,7 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 -f https://download.pytorch.org/whl/torch_stable.html && \
-    pip install notebook tornado watermark opencv-python hello2 papermill && \
+    pip install notebook ipywidgets tornado watermark opencv-python hello2 papermill && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /opt/src

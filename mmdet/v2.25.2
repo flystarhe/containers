@@ -47,7 +47,7 @@ WORKDIR /opt/src
 ARG MMCV
 ARG MMDET
 RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.git && cd mmdetection && \
-    pip install notebook tornado watermark opencv-python hello2 papermill && \
+    pip install notebook ipywidgets tornado watermark opencv-python hello2 papermill && \
     pip install --no-cache-dir mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.11.0/index.html && \
     pip install -r requirements.txt && \
     pip install --no-cache-dir -e .
