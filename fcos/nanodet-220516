@@ -41,7 +41,7 @@ RUN git clone -b v${FCOS} --depth 1 https://github.com/cd-lfi/FCOS.git fcos && c
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
-    echo "export PATH=/opt/conda/bin:$PATH" >> ~/.bashrc && \
+    echo "export PATH=/opt/conda/bin:"'$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main && \
     conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch && \

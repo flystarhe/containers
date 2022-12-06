@@ -54,7 +54,7 @@ RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.g
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
-    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    echo "export PATH=$(dirname $(which conda)):"'$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     pip cache purge && \
     conda clean -ya
