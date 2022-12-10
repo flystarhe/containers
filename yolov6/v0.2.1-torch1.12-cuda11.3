@@ -45,7 +45,7 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
 WORKDIR /opt/src
 
 ARG YOLO
-RUN git clone -b v${YOLO} --depth 1 https://github.com/meituan/YOLOv6.git && cd yolov6 && \
+RUN git clone -b v${YOLO} --depth 1 https://github.com/meituan/YOLOv6.git yolov6 && cd yolov6 && \
     git switch -c main && \
     pip install -r requirements.txt
 
