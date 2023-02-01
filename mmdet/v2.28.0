@@ -1,0 +1,75 @@
+ARG PYTORCH="1.13.1"
+ARG CUDA="11.6"
+ARG CUDNN="8"
+ARG MMCV="1.7.1"
+ARG MMCLS="0.25.0"
+ARG MMDET="2.28.0"
+
+FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
+
+ENV FORCE_CUDA="1"
+ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0+PTX"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+
+# To fix GPG key error when running apt-get update
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        openssh-server \
+        libjpeg-dev \
+        libpng-dev \
+        curl \
+        wget \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        tmux \
+        ffmpeg \
+        ninja-build \
+        libglib2.0-0 \
+        libsm6 \
+        libxrender-dev \
+        libxext6 \
+        tzdata && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install MMDetection
+WORKDIR /opt/src
+ARG MMCV
+ARG MMCLS
+ARG MMDET
+RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.git && cd mmdetection && \
+    pip install notebook ipywidgets tornado watermark opencv-python hello2 papermill && \
+    pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu116/torch1.13/index.html && \
+    pip install mmcls==${MMCLS} && \
+    pip install -r requirements/build.txt && \
+    pip install -r requirements/runtime.txt && \
+    pip install -r requirements/optional.txt && \
+    pip install --no-cache-dir -e .
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip cache purge && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=v2.28.0
+# docker build -t flystarhe/mmdet:${t} -f ${t} .
+# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)":/workspace flystarhe/mmdet:${t} [notebook|ssh|app]
+# Updated: 2023-02-01
