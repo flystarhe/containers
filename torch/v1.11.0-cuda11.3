@@ -3,10 +3,6 @@ ARG CUDA="11.3"
 ARG CUDNN="8"
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
 
-ENV FORCE_CUDA="1"
-ENV TORCH_CUDA_ARCH_LIST="8.0 8.6+PTX"
-ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
-
 # To fix GPG key error when running apt-get update
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
@@ -36,8 +32,7 @@ WORKDIR /opt/src
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
-    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip cache purge
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 # entrypoint
 WORKDIR /workspace
