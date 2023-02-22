@@ -1,0 +1,56 @@
+ARG PYTHON_VERSION="3.9"
+
+FROM nvidia/cuda:11.6.2-cudnn8-devel-ubuntu20.04
+
+ENV OMP_NUM_THREADS=8
+ENV PATH=/opt/conda/bin:$PATH
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        openssh-server \
+        libjpeg-dev \
+        libpng-dev \
+        curl \
+        wget \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        tmux \
+        ffmpeg \
+        tzdata && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG PYTHON_VERSION
+RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    conda install -y python=${PYTHON_VERSION} conda-build && \
+    pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116 && \
+    pip install notebook ipywidgets tornado watermark opencv-python Pillow scikit-image scikit-learn simplejson onnx prettytable pycocotools hello2 fiftyone==0.19.1 && \
+    chmod -R ugo+rw /opt/conda/
+
+WORKDIR /opt/src
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip cache purge && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=v0.19.1
+# docker build -t flystarhe/fiftyone:${t} -f ${t} --build-arg PYTHON_VERSION=3.9 .
+# docker run --restart=always --gpus all -d --network=host --ipc=host --name ${n} -v "$(pwd)":/workspace flystarhe/fiftyone:${t} [notebook|ssh|app]
+# Updated: 2023-02-22
