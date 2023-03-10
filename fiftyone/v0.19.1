@@ -2,7 +2,7 @@ ARG PYTHON_VERSION="3.9"
 FROM nvidia/cuda:11.6.2-cudnn8-devel-ubuntu20.04
 
 ENV OMP_NUM_THREADS=8
-ENV PATH=$(dirname $(which conda)):$PATH
+ENV PATH=/opt/conda/bin:$PATH
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \

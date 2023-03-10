@@ -2,7 +2,7 @@ ARG PYTHON_VERSION="3.9"
 FROM nvidia/cuda:11.3.1-cudnn8-devel-ubuntu20.04
 
 ENV OMP_NUM_THREADS=8
-ENV PATH=$(dirname $(which conda)):$PATH
+ENV PATH=/opt/conda/bin:$PATH
 
 # To fix GPG key error when running apt-get update
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
