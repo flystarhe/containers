@@ -1,0 +1,61 @@
+ARG PYTORCH="1.13.1"
+ARG CUDA="11.6"
+ARG CUDNN="8"
+FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
+
+ENV FORCE_CUDA="1"
+ENV TORCH_CUDA_ARCH_LIST="8.0 8.6+PTX"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+ENV CMAKE_PREFIX_PATH="$(dirname $(which conda))/../"
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        ca-certificates \
+        openssh-server \
+        libjpeg-dev \
+        libpng-dev \
+        curl \
+        wget \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        tree \
+        tmux \
+        ffmpeg \
+        ninja-build \
+        libglib2.0-0 \
+        libsm6 \
+        libxrender-dev \
+        libxext6 \
+        tzdata && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install MMDetection
+WORKDIR /opt/src
+RUN git clone -b v3.0.0rc6 --depth 1 https://github.com/open-mmlab/mmdetection.git && cd mmdetection && \
+    pip install notebook ipywidgets tornado opencv-python prettytable pycocotools hello2 openmim && \
+    mim install "mmengine==0.6.0" "mmcv==2.0.0rc4" "mmcls==1.0.0rc5" && \
+    pip install --no-cache-dir -e .
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip cache purge && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=v3.0.0rc6
+# docker build -t flystarhe/mmdet:${t} -f ${t} .
+# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)":/workspace flystarhe/mmdet:${t} [notebook|ssh|app]
+# Updated: 2023-02-28
