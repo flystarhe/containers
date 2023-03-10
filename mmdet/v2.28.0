@@ -4,7 +4,6 @@ ARG CUDNN="8"
 ARG MMCV="1.7.1"
 ARG MMCLS="0.25.0"
 ARG MMDET="2.28.0"
-
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
 
 ENV FORCE_CUDA="1"
@@ -28,6 +27,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
         unzip \
         htop \
         tmux \
+        tree \
         ffmpeg \
         ninja-build \
         libglib2.0-0 \

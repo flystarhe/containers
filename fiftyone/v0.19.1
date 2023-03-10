@@ -1,9 +1,8 @@
 ARG PYTHON_VERSION="3.9"
-
 FROM nvidia/cuda:11.6.2-cudnn8-devel-ubuntu20.04
 
 ENV OMP_NUM_THREADS=8
-ENV PATH=/opt/conda/bin:$PATH
+ENV PATH=$(dirname $(which conda)):$PATH
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -21,6 +20,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
         unzip \
         htop \
         tmux \
+        tree \
         ffmpeg \
         tzdata && \
     apt-get clean && \
@@ -32,7 +32,7 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116 && \
-    pip install notebook ipywidgets tornado watermark opencv-python Pillow scikit-image scikit-learn simplejson onnx prettytable pycocotools hello2 fiftyone==0.19.1 && \
+    pip install notebook ipywidgets tornado opencv-python Pillow scikit-image scikit-learn simplejson onnx prettytable pycocotools hello2 fiftyone==0.19.1 && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /opt/src
