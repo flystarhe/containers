@@ -23,8 +23,8 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
         zip \
         unzip \
         htop \
-        tree \
         tmux \
+        tree \
         ffmpeg \
         ninja-build \
         libglib2.0-0 \
