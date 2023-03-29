@@ -56,5 +56,5 @@ ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
 # n=test
 # t=v0.17.2
 # docker build -t flystarhe/fiftyone:${t} -f ${t} --build-arg PYTHON_VERSION=3.9 .
-# docker run --restart=always --gpus all -d --network=host --ipc=host --name ${n} -v "$(pwd)":/workspace flystarhe/fiftyone:${t} [notebook|ssh|app]
+# docker run --restart=always --gpus all -d --network=host --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/fiftyone:${t} [notebook|ssh|app]
 # Updated: 2022-10-12

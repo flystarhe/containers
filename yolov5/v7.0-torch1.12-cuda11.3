@@ -64,5 +64,5 @@ ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
 # n=test
 # t=v7.0-torch1.12-cuda11.3
 # docker build -t flystarhe/yolov5:${t} -f ${t} --build-arg PYTHON_VERSION=3.9 .
-# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} -v "$(pwd)":/workspace flystarhe/yolov5:${t} [notebook|ssh|app]
+# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/yolov5:${t} [notebook|ssh|app]
 # Updated: 2022-12-29
