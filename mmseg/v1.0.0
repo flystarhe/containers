@@ -32,11 +32,12 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN pip install --no-cache-dir notebook ipywidgets opencv-python prettytable hello2 openmim && \
+    mim install --no-cache-dir "mmengine==0.7.2" "mmcv==2.0.0" "mmcls==1.0.0rc6"
+
 WORKDIR /opt/src
-RUN git clone -b v1.0.0 --depth 1 https://github.com/open-mmlab/mmsegmentation.git && cd mmsegmentation && \
-    pip install notebook ipywidgets opencv-python prettytable hello2 openmim && \
-    mim install "mmengine==0.7.2" "mmcv==2.0.0" "mmcls==1.0.0rc6" && \
-    pip install --no-cache-dir -e .
+RUN git clone -b v1.0.0 --depth 1 https://github.com/open-mmlab/mmsegmentation.git && \
+    cd mmsegmentation && pip install --no-cache-dir -e .
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
