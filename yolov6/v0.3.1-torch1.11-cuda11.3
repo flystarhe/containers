@@ -3,6 +3,10 @@ FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-devel
 ENV OMP_NUM_THREADS=1 \
     MKL_NUM_THREADS=1
 
+# To fix GPG key error when running apt-get update
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub
+
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -29,7 +33,7 @@ RUN pip install --no-cache-dir notebook ipywidgets opencv-python prettytable hel
 
 WORKDIR /opt/src
 RUN git clone -b v0.3.1 --depth 1 https://github.com/meituan/YOLOv6.git yolov6 && \
-    cd yolov6 && pip install --no-cache-dir -r requirements.txt
+    cd yolov6 && git switch -c main && pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
