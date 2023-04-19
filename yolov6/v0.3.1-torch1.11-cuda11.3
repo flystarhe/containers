@@ -32,7 +32,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
 RUN pip install --no-cache-dir notebook ipywidgets opencv-python prettytable hello2
 
 WORKDIR /opt/src
-RUN git clone -b v0.3.1 --depth 1 https://github.com/meituan/YOLOv6.git yolov6 && \
+RUN git clone -b 0.3.1 --depth 1 https://github.com/meituan/YOLOv6.git yolov6 && \
     cd yolov6 && git switch -c main && pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
