@@ -47,7 +47,6 @@ WORKDIR /opt/src
 
 ARG YOLO
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
-    git switch -c main && \
     pip install --no-cache -r requirements.txt ultralytics albumentations comet gsutil
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
