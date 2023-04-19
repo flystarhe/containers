@@ -11,23 +11,23 @@ RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machi
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt-get update && apt-get install -y --no-install-recommends \
-        build-essential \
-        ca-certificates \
-        openssh-server \
-        libjpeg-dev \
-        libpng-dev \
-        curl \
-        wget \
-        git \
-        vim \
-        tar \
-        zip \
-        unzip \
-        htop \
-        tmux \
-        tree \
-        ffmpeg \
-        tzdata && \
+    build-essential \
+    ca-certificates \
+    openssh-server \
+    libjpeg-dev \
+    libpng-dev \
+    curl \
+    wget \
+    git \
+    vim \
+    tar \
+    zip \
+    unzip \
+    htop \
+    tmux \
+    tree \
+    ffmpeg \
+    tzdata && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
