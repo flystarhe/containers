@@ -1,8 +1,8 @@
 FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-devel
 
 ENV OMP_NUM_THREADS=1 \
-    MKL_NUM_THREADS=1
-ENV TORCH_CUDA_ARCH_LIST="8.0 8.6+PTX" \
+    MKL_NUM_THREADS=1 \
+    TORCH_CUDA_ARCH_LIST="8.0 8.6+PTX" \
     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
     CMAKE_PREFIX_PATH="$(dirname $(which conda))/../" \
     FORCE_CUDA="1"
@@ -35,11 +35,11 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir notebook ipywidgets opencv-python prettytable hello2 openmim && \
-    mim install --no-cache-dir "mmengine==0.7.2" "mmcv==2.0.0" "mmcls==1.0.0rc6"
+    mim install --no-cache-dir "mmengine==0.7.2" "mmcv==2.0.0" "mmcls==1.0.0rc6" "mmdet==3.0.0"
 
-WORKDIR /opt/src
-RUN git clone -b v1.0.0 --depth 1 https://github.com/open-mmlab/mmsegmentation.git && \
-    cd mmsegmentation && pip install --no-cache-dir -e .
+WORKDIR /opt/src/mmsegmentation
+RUN git clone -b v1.0.0 --depth 1 https://github.com/open-mmlab/mmsegmentation.git . && \
+    pip install --no-cache-dir -e .
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
