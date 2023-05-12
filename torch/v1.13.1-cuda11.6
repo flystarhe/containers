@@ -1,0 +1,45 @@
+FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-devel
+
+ENV OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    openssh-server \
+    libjpeg-dev \
+    libpng-dev \
+    curl \
+    wget \
+    git \
+    vim \
+    tar \
+    zip \
+    unzip \
+    htop \
+    tmux \
+    tree \
+    ffmpeg \
+    tzdata && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/src
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=v1.13.1-cuda11.6
+# docker build -t flystarhe/torch:${t} -f ${t} .
+# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/torch:${t} [notebook|ssh|app]
+# Updated: 2023-05-06
