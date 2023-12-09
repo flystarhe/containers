@@ -49,9 +49,4 @@ RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
 WORKDIR /workspace
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
-# Build and run
-# n=test
-# t=torch2.1.0-cuda11.8
-# docker build -t flystarhe/yolov8:${t} -f ${t} .
-# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/yolov8:${t} [notebook|ssh|app]
 # Updated: 2023-12-09

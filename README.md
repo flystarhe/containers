@@ -45,8 +45,8 @@ export DOCKER_BUILDKIT=1
 docker build -t flystarhe/python:3.8 -f 3.8 --target official .
 
 docker run -it --rm --gpus all nvidia/cuda:11.1-base-ubuntu18.04 bash
-t=test && docker run -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
-t=test && docker run --gpus '"device=0,1"' -d -p 7000:9000 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
+t=test && docker run -d -p 7000:9000 -p 7001:9001 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
+t=test && docker run --gpus '"device=0,1"' -d -p 7000:9000 -p 7001:9001 --ipc=host --name ${t} -v "$(pwd)"/${t}:/workspace flystarhe/python:3.8
 ```
 
 * `/usr/sbin/sshd -D -p 7000` for `ssh` mode
