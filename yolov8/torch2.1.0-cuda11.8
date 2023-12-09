@@ -1,0 +1,57 @@
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+
+ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt update && apt install --no-install-recommends -y \
+    build-essential \
+    ca-certificates \
+    openssh-server \
+    libjpeg-dev \
+    libpng-dev \
+    curl \
+    wget \
+    git \
+    vim \
+    tar \
+    zip \
+    unzip \
+    htop \
+    tmux \
+    tree \
+    ffmpeg \
+    libgl1 \
+    libglib2.0-0 \
+    gnupg \
+    gcc \
+    g++ \
+    libusb-1.0-0 \
+    tzdata && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
+    albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools
+
+WORKDIR /opt/src/yolov8
+RUN git clone -b main --depth 1 https://github.com/ultralytics/ultralytics.git . && \
+    pip install --no-cache-dir -e . && \
+    wget -q https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt .
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip cache purge && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Build and run
+# n=test
+# t=torch2.1.0-cuda11.8
+# docker build -t flystarhe/yolov8:${t} -f ${t} .
+# docker run --restart=always --gpus all -d -p 7000:9000 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/yolov8:${t} [notebook|ssh|app]
+# Updated: 2023-12-09
