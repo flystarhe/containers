@@ -1,0 +1,63 @@
+ARG PYTHON_VERSION="3.9"
+ARG YOLO="7.0"
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+
+ENV OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1
+ENV PATH=/opt/conda/bin:$PATH
+
+ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt update && apt install --no-install-recommends -y \
+        build-essential \
+        ca-certificates \
+        openssh-server \
+        libjpeg-dev \
+        libpng-dev \
+        curl \
+        wget \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        tmux \
+        tree \
+        ffmpeg \
+        libgl1 \
+        libglib2.0-0 \
+        gnupg \
+        gcc \
+        tzdata && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG PYTHON_VERSION
+RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    conda install -y python=${PYTHON_VERSION} conda-build && \
+    pip install torch==2.1.0 torchvision==0.16.0 --index-url https://download.pytorch.org/whl/cu118 && \
+    pip install notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 && \
+    chmod -R ugo+rw /opt/conda/
+
+WORKDIR /opt/src
+
+ARG YOLO
+RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
+    pip install --no-cache -r requirements.txt albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools gsutil
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda)):$PATH" >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip cache purge && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Updated: 2023-12-13

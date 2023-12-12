@@ -33,8 +33,8 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
 RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
     albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools
 
-WORKDIR /opt/src/yolov8
-RUN git clone -b main --depth 1 https://github.com/ultralytics/ultralytics.git . && \
+WORKDIR /opt/src
+RUN git clone -b main --depth 1 https://github.com/ultralytics/ultralytics.git yolov8 && cd yolov8 && \
     pip install --no-cache-dir -e . && \
     wget -q https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt .
 
