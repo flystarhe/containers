@@ -47,7 +47,7 @@ WORKDIR /opt/src
 
 ARG YOLO
 RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
-    pip install --no-cache -r requirements.txt albumentations wandb gsutil
+    pip install --no-cache-dir -r requirements.txt albumentations wandb gsutil
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
