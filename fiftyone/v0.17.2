@@ -36,8 +36,8 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
-    pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113 && \
-    pip install notebook ipywidgets tornado opencv-python hello2 fiftyone==0.17.2 && \
+    pip install --no-cache-dir torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113 && \
+    pip install --no-cache-dir notebook ipywidgets tornado opencv-python hello2 fiftyone==0.17.2 && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /opt/src
@@ -46,7 +46,6 @@ RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
     echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip cache purge && \
     conda clean -ya
 
 # entrypoint

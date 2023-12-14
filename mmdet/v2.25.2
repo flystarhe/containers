@@ -47,16 +47,15 @@ WORKDIR /opt/src
 ARG MMCV
 ARG MMDET
 RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.git && cd mmdetection && \
-    pip install notebook ipywidgets tornado watermark opencv-python hello2 papermill && \
+    pip install --no-cache-dir notebook ipywidgets tornado watermark opencv-python hello2 papermill && \
     pip install --no-cache-dir mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.11.0/index.html && \
-    pip install -r requirements.txt && \
+    pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir -e .
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
     echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip cache purge && \
     conda clean -ya
 
 # entrypoint

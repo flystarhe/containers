@@ -44,19 +44,18 @@ ARG MMCV
 ARG MMCLS
 ARG MMDET
 RUN git clone -b v${MMDET} --depth 1 https://github.com/open-mmlab/mmdetection.git && cd mmdetection && \
-    pip install notebook ipywidgets tornado watermark opencv-python hello2 papermill && \
-    pip install mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu116/torch1.13/index.html && \
-    pip install mmcls==${MMCLS} && \
-    pip install -r requirements/build.txt && \
-    pip install -r requirements/runtime.txt && \
-    pip install -r requirements/optional.txt && \
+    pip install --no-cache-dir notebook ipywidgets tornado watermark opencv-python hello2 papermill && \
+    pip install --no-cache-dir mmcv-full==${MMCV} -f https://download.openmmlab.com/mmcv/dist/cu116/torch1.13/index.html && \
+    pip install --no-cache-dir mmcls==${MMCLS} && \
+    pip install --no-cache-dir -r requirements/build.txt && \
+    pip install --no-cache-dir -r requirements/runtime.txt && \
+    pip install --no-cache-dir -r requirements/optional.txt && \
     pip install --no-cache-dir -e .
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
     echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
-    pip cache purge && \
     conda clean -ya
 
 # entrypoint
