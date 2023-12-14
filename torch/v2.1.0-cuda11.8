@@ -5,6 +5,7 @@ ENV OMP_NUM_THREADS=1 \
     MKL_NUM_THREADS=1
 ENV PATH=/opt/conda/bin:$PATH
 
+RUN sed -i -e 's/^APT/# APT/' -e 's/^DPkg/# DPkg/' /etc/apt/apt.conf.d/docker-clean
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt update && apt install --no-install-recommends -y \
         build-essential \
