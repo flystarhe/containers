@@ -1,4 +1,4 @@
-# MMDetection
+# mmdet
 
 ## Data
 ```sh
@@ -10,17 +10,14 @@ wget -q https://github.com/flystarhe/containers/releases/download/v0.2.0/coco201
 git clone https://github.com/flystarhe/containers.git && \
 cd containers/mmdet
 
-t=v2.24.1 && \
-docker build -t build/mmdet:${t} -f ${t} .
+t=v3.2.0 && \
+docker build -t flystarhe/mmdet:${t} -f ${t} .
 
 docker tag build/mmdet:${t} flystarhe/mmdet:${t}
 docker push flystarhe/mmdet:${t}
-```
 
-simple case
-```sh
-t=flystarhe/mmdet:v2.24.1 && \
-docker run --gpus all -d -p 7000:9000 --ipc=host --name test -v "$(pwd)":/workspace ${t} notebook
+n=hejian-mmdet
+docker run --restart=always --gpus all -d -p 7000:9000 -p 7001:9001 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/mmdet:${t} [notebook|ssh|app]
 
 # line 1
 # http://hostname:7000/?token=hi
@@ -28,8 +25,6 @@ docker run --gpus all -d -p 7000:9000 --ipc=host --name test -v "$(pwd)":/worksp
 
 # line 2
 docker exec -it test bash
-
-# exit
 docker stop test
 docker rm test
 ```
