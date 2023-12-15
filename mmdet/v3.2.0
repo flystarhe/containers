@@ -1,6 +1,11 @@
 FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
 
-ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
+ENV OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    TORCH_CUDA_ARCH_LIST="8.0 8.6+PTX" \
+    TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
+    CMAKE_PREFIX_PATH="$(dirname $(which conda))/../" \
+    FORCE_CUDA="1"
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt update && apt install --no-install-recommends -y \
@@ -20,24 +25,23 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     tmux \
     tree \
     ffmpeg \
-    libgl1 \
+    ninja-build \
     libglib2.0-0 \
-    gnupg \
-    gcc \
-    g++ \
-    libusb-1.0-0 \
+    libsm6 \
+    libxrender-dev \
+    libxext6 \
     tzdata && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
-    albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools
+    albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools openmim && \
+    mim install --no-cache-dir "mmengine==0.10.1" "mmcv==2.1.0" "mmpretrain==1.1.1"
 
-WORKDIR /opt/src/yolov8
-RUN git clone -b main --depth 1 https://github.com/ultralytics/ultralytics.git . && \
+WORKDIR /opt/src/mmdetection
+RUN git clone -b v3.2.0 --depth 1 https://github.com/open-mmlab/mmdetection.git . && \
     pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir -e . && \
-    wget -q https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
+    pip install --no-cache-dir -e .
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
     echo "# ssh keys" > ~/.ssh/authorized_keys && \
@@ -49,4 +53,4 @@ RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
 WORKDIR /workspace
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
-# Updated: 2023-12-09
+# Updated: 2023-12-15
