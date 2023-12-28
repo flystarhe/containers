@@ -1,0 +1,40 @@
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt update && apt install --no-install-recommends -y \
+        build-essential \
+        ca-certificates \
+        openssh-server \
+        libjpeg-dev \
+        libpng-dev \
+        curl \
+        wget \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        tmux \
+        tree \
+        tzdata && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
+    accelerate bitsandbytes datasets evaluate fire peft timm transformers scipy sentencepiece \
+    fastapi gradio wandb
+
+WORKDIR /opt/src
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Updated: 2023-12-28
