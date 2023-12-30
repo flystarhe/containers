@@ -10,8 +10,6 @@
 * [https://hub.docker.com/repository/docker/flystarhe/mmdet](https://hub.docker.com/repository/docker/flystarhe/mmdet)
 * `docker pull flystarhe/mmdet:[镜像版本号]`
 
-`mmdet/v2.25.1`
-
 >Run `python mmdet/utils/collect_env.py` to check built environment.
 
 ## flystarhe/torch
@@ -19,16 +17,7 @@
 * [https://hub.docker.com/repository/docker/flystarhe/torch](https://hub.docker.com/repository/docker/flystarhe/torch)
 * `docker pull flystarhe/torch:[镜像版本号]`
 
-`1.8.1-cuda11.1-dev`
-
 >CUDA HOME `from torch.utils.cpp_extension import CUDA_HOME`, CUDA architectures with `torch.cuda.get_arch_list()`, NVCC gencode flags with `torch.cuda.get_gencode_flags()`.
-
-## flystarhe/yolov5
-
-* [https://hub.docker.com/repository/docker/flystarhe/yolov5](https://hub.docker.com/repository/docker/flystarhe/yolov5)
-* `docker pull flystarhe/yolov5:[镜像版本号]`
-
-`v6.1-torch1.12-cuda11.3`
 
 ## build and run
 ```
@@ -52,6 +41,10 @@ t=test && docker run --gpus '"device=0,1"' -d -p 7000:9000 -p 7001:9001 --ipc=ho
 * `/usr/sbin/sshd -D -p 7000` for `ssh` mode
 * `python /workspace/app_tornado.py 7000 ${@:2}` for `app` mode
 * `http://ip:7000/?token=hi` for `notebook` mode or other command
+
+### FAQ
+- Q: 创建容器时端口绑定失败`iptables: No chain/target/match by that name.`
+- A: 宿主机执行命令`iptables -t filter -X && iptables -t filter -F`
 
 ## docker hub
 ```
