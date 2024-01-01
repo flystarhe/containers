@@ -41,15 +41,14 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /opt/src
-
-RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+COPY share_ssh/ /opt/src/.ssh/
+RUN mkdir -p /run/sshd && rm -rf ~/.ssh && mv /opt/src/.ssh ~/.ssh && \
     echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda clean -ya
 
 # entrypoint
 WORKDIR /workspace
-COPY share_ssh/* ~/.ssh/
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
 # Updated: 2024-01-01
