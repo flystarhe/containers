@@ -38,7 +38,6 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
     pip install --no-cache-dir torch==2.1.0 torchvision==0.16.0 --index-url https://download.pytorch.org/whl/cu118 && \
-    pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /opt/src
@@ -53,4 +52,4 @@ WORKDIR /workspace
 COPY share_ssh/* ~/.ssh/
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
-# Updated: 2023-12-13
+# Updated: 2024-01-01
