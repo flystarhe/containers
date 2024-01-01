@@ -1,6 +1,6 @@
 # https://github.com/roboflow/inference/blob/main/docker/dockerfiles/Dockerfile.onnx.gpu
 # docker pull roboflow/roboflow-inference-server-gpu
-FROM nvcr.io/nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu22.04 as base
+FROM nvcr.io/nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04 as base
 
 WORKDIR /app
 

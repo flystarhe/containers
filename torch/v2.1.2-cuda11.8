@@ -1,12 +1,10 @@
-ARG PYTHON_VERSION="3.9"
-ARG YOLO="7.0"
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+ARG PYTHON_VERSION="3.10"
+FROM nvcr.io/nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+# https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda/tags
 
 ENV OMP_NUM_THREADS=1 \
-    MKL_NUM_THREADS=1
-ENV PATH=/opt/conda/bin:$PATH
-
-ADD https://ultralytics.com/assets/Arial.ttf https://ultralytics.com/assets/Arial.Unicode.ttf /root/.config/Ultralytics/
+    MKL_NUM_THREADS=1 \
+    PATH=/opt/conda/bin:$PATH
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt update && apt install --no-install-recommends -y \
@@ -39,24 +37,20 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     conda install -y python=${PYTHON_VERSION} conda-build && \
-    pip install --no-cache-dir torch==2.1.0 torchvision==0.16.0 --index-url https://download.pytorch.org/whl/cu118 && \
+    pip install --no-cache-dir torch==2.1.2 torchvision==0.16.2 --index-url https://download.pytorch.org/whl/cu118 && \
     pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 && \
     chmod -R ugo+rw /opt/conda/
 
 WORKDIR /opt/src
 
-ARG YOLO
-RUN git clone -b v${YOLO} --depth 1 https://github.com/ultralytics/yolov5.git yolov5 && cd yolov5 && \
-    pip install --no-cache-dir -r requirements.txt albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools gsutil
-
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
-    echo "# ssh keys" > ~/.ssh/authorized_keys && \
     echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda clean -ya
 
 # entrypoint
 WORKDIR /workspace
+COPY ssh_share/* ~/.ssh/
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
-# Updated: 2023-12-13
+# Updated: 2024-01-01
