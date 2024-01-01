@@ -1,9 +1,10 @@
-ARG PYTHON_VERSION="3.9"
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+ARG PYTHON_VERSION="3.10"
+FROM nvcr.io/nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+# https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda/tags
 
 ENV OMP_NUM_THREADS=1 \
-    MKL_NUM_THREADS=1
-ENV PATH=/opt/conda/bin:$PATH
+    MKL_NUM_THREADS=1 \
+    PATH=/opt/conda/bin:$PATH
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt update && apt install --no-install-recommends -y \
@@ -43,13 +44,13 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
 WORKDIR /opt/src
 
 RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
-    echo "# ssh keys" > ~/.ssh/authorized_keys && \
     echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda clean -ya
 
 # entrypoint
 WORKDIR /workspace
+COPY authorized_keys ~/.ssh/
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
 # Updated: 2023-12-13
