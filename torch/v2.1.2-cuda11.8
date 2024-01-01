@@ -50,7 +50,7 @@ RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
 
 # entrypoint
 WORKDIR /workspace
-COPY authorized_keys ~/.ssh/
+COPY share_ssh/* ~/.ssh/
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
 # Updated: 2024-01-01
