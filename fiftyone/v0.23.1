@@ -1,6 +1,7 @@
 FROM flystarhe/torch:v2.1.0-cuda11.8
 
-RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 fiftyone==0.23.1
+RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
+    fiftyone==0.23.1
 
 # entrypoint
 WORKDIR /workspace
