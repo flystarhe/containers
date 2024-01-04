@@ -9,8 +9,7 @@ RUN rm -rf /opt/src/yolov8 && mkdir -p /opt/src/yolov8
 WORKDIR /opt/src/yolov8
 RUN git clone -b main --depth 1 https://github.com/ultralytics/ultralytics.git . && \
     pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir -e . && \
-    wget -q https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
+    pip install --no-cache-dir -e .
 
 # entrypoint
 WORKDIR /workspace
