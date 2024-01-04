@@ -3,12 +3,11 @@ FROM flystarhe/torch:v2.1.0-cuda11.8
 COPY Arial.ttf Arial.Unicode.ttf /root/.config/Ultralytics/
 
 RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
-    albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools
+    albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools tensorboard
 
 RUN rm -rf /opt/src/yolov8 && mkdir -p /opt/src/yolov8
 WORKDIR /opt/src/yolov8
 RUN git clone -b main --depth 1 https://github.com/ultralytics/ultralytics.git . && \
-    pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir -e .
 
 # entrypoint
