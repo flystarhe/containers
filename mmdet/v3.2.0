@@ -14,7 +14,7 @@ RUN apt update && apt install --no-install-recommends -y \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
-    albumentations comet onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools openmim && \
+    albumentations comet_ml onnx onnxsim nvidia-pyindex nvidia-tensorrt pycocotools openmim && \
     mim install --no-cache-dir "mmengine==0.10.1" "mmcv==2.1.0" "mmpretrain==1.1.1"
 
 RUN rm -rf /opt/src/mmdetection && mkdir -p /opt/src/mmdetection
