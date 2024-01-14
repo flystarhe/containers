@@ -11,6 +11,7 @@ docker build -t flystarhe/torch:${t} -f ${t} .
 docker tag build/torch:${t} flystarhe/torch:${t}
 docker push flystarhe/torch:${t}
 
-n=docker-torch
-docker run --restart=always --gpus all -d -p 7000:9000 -p 7001:9001 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/torch:${t} [notebook|ssh|app]
+n=hejian-torch
+t=flystarhe/torch:v2.1.0-cuda11.8
+docker run --restart=always --gpus all -d -p 7000:9000 -p 7001:9001 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace ${t} [notebook|ssh|app]
 ```

@@ -16,8 +16,9 @@ docker build -t flystarhe/mmdet:${t} -f ${t} .
 docker tag build/mmdet:${t} flystarhe/mmdet:${t}
 docker push flystarhe/mmdet:${t}
 
-n=docker-mmdet
-docker run --restart=always --gpus all -d -p 7000:9000 -p 7001:9001 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace flystarhe/mmdet:${t} [notebook|ssh|app]
+n=hejian-mmdet
+t=flystarhe/mmdet:v3.2.0
+docker run --restart=always --gpus all -d -p 7000:9000 -p 7001:9001 --ipc=host --name ${n} --hostname ${n} -v "$(pwd)":/workspace ${t} [notebook|ssh|app]
 
 # line 1
 # http://hostname:7000/?token=hi
