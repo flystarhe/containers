@@ -1,0 +1,11 @@
+FROM flystarhe/torch:v2.1.2-cuda11.8
+
+RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2
+RUN pip install --no-cache-dir accelerate bitsandbytes datasets evaluate fire peft timm transformers scipy sentencepiece \
+    fastapi gradio wandb
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Updated: 2024-01-01
