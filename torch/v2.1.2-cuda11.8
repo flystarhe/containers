@@ -6,7 +6,8 @@ ENV OMP_NUM_THREADS=1 \
     MKL_NUM_THREADS=1 \
     PATH=/opt/conda/bin:$PATH
 
-RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+RUN chmod 1777 /tmp && \
+    ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     apt update && apt install --no-install-recommends -y \
         build-essential \
         ca-certificates \

@@ -1,7 +1,7 @@
 FROM flystarhe/torch:v2.1.0-cuda11.8
 
-RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
-    accelerate bitsandbytes datasets evaluate fire peft timm transformers scipy sentencepiece \
+RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2
+RUN pip install --no-cache-dir accelerate bitsandbytes datasets evaluate fire peft timm transformers scipy sentencepiece \
     fastapi gradio wandb
 
 # entrypoint
