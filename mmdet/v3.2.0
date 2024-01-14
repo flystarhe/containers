@@ -1,4 +1,4 @@
-FROM flystarhe/torch:v2.1.0-cuda11.8
+FROM flystarhe/torch:v2.1.2-cuda11.8
 
 ENV TORCH_CUDA_ARCH_LIST="8.0 8.6+PTX" \
     TORCH_NVCC_FLAGS="-Xfatbin -compress-all" \
@@ -13,9 +13,9 @@ RUN apt update && apt install --no-install-recommends -y \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2 \
-    albumentations comet_ml onnx onnxsim pycocotools tensorboard wandb openmim && \
-    mim install --no-cache-dir "mmengine==0.10.1" "mmcv==2.1.0" "mmpretrain==1.1.1"
+RUN pip install --no-cache-dir notebook ipywidgets opencv-python pillow scikit-learn prettytable hello2
+RUN pip install --no-cache-dir albumentations comet_ml onnx onnxsim pycocotools tensorboard wandb openmim
+RUN mim install --no-cache-dir "mmengine==0.10.1" "mmcv==2.1.0" "mmpretrain==1.1.1"
 
 RUN rm -rf /opt/src/mmdetection && mkdir -p /opt/src/mmdetection
 WORKDIR /opt/src/mmdetection
