@@ -5,6 +5,7 @@ ENV TORCH_CUDA_ARCH_LIST="8.0 8.6+PTX" \
     CMAKE_PREFIX_PATH="$(dirname $(which conda))/../" \
     FORCE_CUDA="1"
 
+RUN chmod 1777 /tmp
 RUN apt update && apt install --no-install-recommends -y \
         ninja-build \
         libsm6 \
