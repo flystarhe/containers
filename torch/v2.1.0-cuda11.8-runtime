@@ -41,9 +41,8 @@ RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-lat
     pip install --no-cache-dir torch==2.1.0 torchvision==0.16.0 --index-url https://download.pytorch.org/whl/cu118 && \
     chmod -R ugo+rw /opt/conda/
 
-WORKDIR /opt/src
-COPY share_ssh/ /opt/src/.ssh/
-RUN mkdir -p /run/sshd && rm -rf ~/.ssh && mv /opt/src/.ssh ~/.ssh && \
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
     echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
     pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
     conda clean -ya
@@ -52,4 +51,4 @@ RUN mkdir -p /run/sshd && rm -rf ~/.ssh && mv /opt/src/.ssh ~/.ssh && \
 WORKDIR /workspace
 COPY entrypoint.sh /opt/src/
 ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
-# Updated: 2024-01-01
+# Updated: 2024-04-04
