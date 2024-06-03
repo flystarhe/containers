@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-MODE="${1:-ssh}"
+MODE="${1:-null}"
 
 if [ "${MODE}" = 'ssh' ]; then
     /usr/sbin/sshd -p 9000

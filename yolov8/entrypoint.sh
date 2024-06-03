@@ -1,16 +1,16 @@
 #!/bin/bash
 set -e
 
-MODE=${1:-dev}
-if [ "${MODE}" = 'ssh' ]
-then
-    /usr/sbin/sshd -D -p 9000
-elif [ "${MODE}" = 'app' ]
-then
-    nohup python /workspace/app_tornado.py 9000 ${@:2} > /workspace/nohup.out 2>&1
-elif [ "${MODE}" = 'notebook' ]
-then
-    jupyter notebook --ip='*' --port=9000 --notebook-dir='/workspace' --NotebookApp.token='hi' --no-browser --allow-root
-else
-    tail -f /dev/null
+MODE="${1:-null}"
+
+if [ "${MODE}" = 'ssh' ]; then
+    /usr/sbin/sshd -p 9000
+elif [ "${MODE}" = 'tornado' ]; then
+    nohup python /workspace/main.py 9000 ${@:2} >> /workspace/log.out 2>&1 &
+elif [ "${MODE}" = 'fastapi' ]; then
+    nohup uvicorn main:app --host 0.0.0.0 --port 9000 --workers 1 >> /workspace/log.out 2>&1 &
+elif [ "${MODE}" = 'notebook' ]; then
+    nohup jupyter notebook --ip='*' --port=9000 --notebook-dir='/workspace' --NotebookApp.token='hi' --no-browser --allow-root >> /workspace/log.out 2>&1 &
 fi
+
+tail -f /dev/null
