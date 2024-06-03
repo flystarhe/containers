@@ -1,0 +1,56 @@
+ARG PYTHON_VERSION="3.11"
+FROM nvcr.io/nvidia/cuda:12.1.1-cudnn8-devel-ubuntu22.04
+# https://catalog.ngc.nvidia.com/orgs/nvidia/containers/cuda/tags
+
+ENV OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    PATH=/opt/conda/bin:$PATH
+
+RUN chmod 1777 /tmp && \
+    ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt update && apt install --no-install-recommends -y \
+        language-pack-zh-hans \
+        build-essential \
+        ca-certificates \
+        openssh-server \
+        libjpeg-dev \
+        libpng-dev \
+        curl \
+        wget \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        tmux \
+        tree \
+        ffmpeg \
+        libgl1 \
+        libglib2.0-0 \
+        gnupg \
+        gcc \
+        tzdata && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN:zh LC_ALL=zh_CN.UTF-8
+
+ARG PYTHON_VERSION
+RUN wget -q -O ~/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    conda install -y python=${PYTHON_VERSION} conda-build && \
+    pip install --no-cache-dir torch==2.2.2 torchvision==0.17.2 --index-url https://download.pytorch.org/whl/cu121 && \
+    chmod -R ugo+rw /opt/conda/
+
+RUN mkdir -p /run/sshd && mkdir -p ~/.ssh && \
+    echo "# ssh keys" > ~/.ssh/authorized_keys && \
+    echo "export PATH=$(dirname $(which conda))"':$PATH' >> ~/.bashrc && \
+    pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    conda clean -ya
+
+# entrypoint
+WORKDIR /workspace
+COPY entrypoint.sh /opt/src/
+ENTRYPOINT ["/bin/bash", "/opt/src/entrypoint.sh"]
+# Updated: 2024-06-04
