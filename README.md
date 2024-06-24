@@ -1,9 +1,7 @@
 # Containers
 
-## registry.cn-hangzhou.aliyuncs.com/flystarhe/containers
-
-* [https://cr.console.aliyun.com/cn-hangzhou/instance/repositories](https://cr.console.aliyun.com/cn-hangzhou/instance/repositories)
-* `docker pull registry.cn-hangzhou.aliyuncs.com/flystarhe/containers:[镜像版本号]`
+## registry.cn-hangzhou.aliyuncs.com/flystarhe/base
+`/base/`
 
 ## flystarhe/mmdet
 
