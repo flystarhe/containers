@@ -1,0 +1,2 @@
+FROM milvusdb/milvus:v2.5.1-gpu
+# docker tag local:milvus-v2.5.1-gpu milvusdb/milvus:v2.5.1-gpu
