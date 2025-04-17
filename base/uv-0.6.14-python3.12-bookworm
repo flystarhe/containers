@@ -1,1 +1,29 @@
 FROM ghcr.io/astral-sh/uv:0.6.14-python3.12-bookworm
+
+RUN chmod 1777 /tmp && \
+    ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apt update && apt install --no-install-recommends -y \
+        language-pack-zh-hans \
+        build-essential \
+        ca-certificates \
+        openssh-server \
+        curl \
+        wget \
+        git \
+        vim \
+        tar \
+        zip \
+        unzip \
+        htop \
+        tmux \
+        gnupg \
+        gcc \
+        g++ \
+        tzdata && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "tail -f /dev/null" > /entrypoint.sh && \
+    update-locale LANG=zh_CN.UTF-8 LANGUAGE=zh_CN:zh LC_ALL=zh_CN.UTF-8
+
+# entrypoint
+ENTRYPOINT ["bash", "/entrypoint.sh"]
