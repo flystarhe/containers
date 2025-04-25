@@ -1,0 +1,1 @@
+FROM ghcr.io/comet-ml/opik/opik-backend:1.7.11
