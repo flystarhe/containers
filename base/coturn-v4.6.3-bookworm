@@ -1,0 +1,1 @@
+FROM coturn/coturn:4.6.3-bookworm
